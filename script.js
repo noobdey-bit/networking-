@@ -1,4 +1,3 @@
-
 /* ============ utils ============ */
 function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
 function logMsg(logEl, text){
@@ -31,58 +30,28 @@ function randInt(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
 /* ============ theme toggle ============ */
 const themeToggle=document.getElementById('themeToggle');
 const htmlEl=document.documentElement;
-const storageKey='networking-simulator-theme';
-const readStateKey='networking-simulator-read';
-
 function applyThemeIcon(){
   const t=htmlEl.getAttribute('data-theme');
   themeToggle.querySelector('.knob').textContent = t==='dark' ? '🌙':'☀️';
 }
-
-function setTheme(theme){
-  htmlEl.setAttribute('data-theme', theme);
-  localStorage.setItem(storageKey, theme);
-  applyThemeIcon();
-}
-
-const savedTheme=localStorage.getItem(storageKey);
-if(savedTheme){
-  setTheme(savedTheme);
-} else {
-  const prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;
-  setTheme(prefersDark ? 'dark' : 'light');
-}
-
+applyThemeIcon();
 themeToggle.addEventListener('click', ()=>{
-  const current=htmlEl.getAttribute('data-theme');
-  setTheme(current==='dark' ? 'light' : 'dark');
+  const c=htmlEl.getAttribute('data-theme');
+  htmlEl.setAttribute('data-theme', c==='dark' ? 'light':'dark');
+  applyThemeIcon();
 });
 
 /* ============ page routing (SPA) ============ */
-function pageTitle(id){
-  const names={home:'सुरुको पाना', t1:'नेटवर्क भनेको के हो', t2:'Google.com कसरी चल्छ', t3:'OSI मोडल', t4:'TCP/IP मोडल', t5:'IP बनाम MAC', t6:'Switch', t7:'Router', t8:'Packet को यात्रा', t9:'TCP बनाम UDP', t10:'VLAN', t11:'Subnetting', t12:'DNS, DHCP, NAT', quiz:'Quiz'};
-  return names[id] || 'नेटवर्किङ सिमुलेटर';
-}
-
 function showPage(id){
-  const safeId=id || 'home';
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  const target=document.getElementById('page-'+safeId) || document.getElementById('page-home');
+  const target=document.getElementById('page-'+id) || document.getElementById('page-home');
   target.classList.add('active');
-  document.querySelectorAll('.navlist a').forEach(a=>{
-    a.classList.remove('active');
-    a.removeAttribute('aria-current');
-  });
-  const navA=document.querySelector('.navlist a[data-target="'+safeId+'"]');
-  if(navA){
-    navA.classList.add('active');
-    navA.setAttribute('aria-current','page');
-  }
+  document.querySelectorAll('.navlist a').forEach(a=>a.classList.remove('active'));
+  const navA=document.querySelector('.navlist a[data-target="'+id+'"]');
+  if(navA) navA.classList.add('active');
   document.querySelector('main').scrollTo(0,0);
-  document.title=pageTitle(safeId)+' — नेटवर्किङ सिमुलेटर';
-  history.replaceState(null,'','#'+safeId);
+  history.replaceState(null,'','#'+id);
 }
-
 document.querySelectorAll('.navgo').forEach(a=>{
   a.addEventListener('click', e=>{
     e.preventDefault();
@@ -92,52 +61,32 @@ document.querySelectorAll('.navgo').forEach(a=>{
 window.addEventListener('hashchange', ()=>{
   showPage(location.hash.replace('#','')||'home');
 });
-
-document.querySelectorAll('button').forEach(btn=>{
-  if(!btn.hasAttribute('type')) btn.type='button';
-});
+showPage(location.hash.replace('#','')||'home');
 
 /* ============ mark-as-read progress ============ */
-const totalTopics=12;
-const readSet=new Set(JSON.parse(localStorage.getItem(readStateKey) || '[]'));
+const totalTopics=30;
+const readSet=new Set();
 const progressFill=document.getElementById('progressFill');
 const progressText=document.getElementById('progressText');
 function updateProgress(){
   const n=readSet.size;
   progressFill.style.width=(n/totalTopics*100)+'%';
   progressText.textContent=n+' / '+totalTopics+' पूरा भयो';
-  localStorage.setItem(readStateKey, JSON.stringify([...readSet]));
 }
-
-function syncReadButtons(){
-  document.querySelectorAll('.mark-read').forEach(btn=>{
-    const id=btn.dataset.topic;
-    const navItem=document.querySelector('.navlist a[data-topic="'+id+'"]');
-    if(readSet.has(id)){
-      btn.classList.add('done'); btn.textContent='✓ पढियो';
-      navItem && navItem.classList.add('done');
-    } else {
-      btn.classList.remove('done'); btn.textContent='○ पढिसकें';
-      navItem && navItem.classList.remove('done');
-    }
-  });
-}
-
 document.querySelectorAll('.mark-read').forEach(btn=>{
   btn.addEventListener('click', ()=>{
     const id=btn.dataset.topic;
+    const navItem=document.querySelector('.navlist a[data-topic="'+id+'"]');
     if(readSet.has(id)){
-      readSet.delete(id);
+      readSet.delete(id); btn.classList.remove('done'); btn.textContent='○ पढिसकें';
+      navItem && navItem.classList.remove('done');
     } else {
-      readSet.add(id);
+      readSet.add(id); btn.classList.add('done'); btn.textContent='✓ पढियो';
+      navItem && navItem.classList.add('done');
     }
-    syncReadButtons();
     updateProgress();
   });
 });
-syncReadButtons();
-updateProgress();
-showPage(location.hash.replace('#','')||'home');
 
 /* ============ T1: Network ============ */
 (function(){
@@ -570,6 +519,464 @@ showPage(location.hash.replace('#','')||'home');
     logMsg(log,'Reset भयो। "DHCP: IP माग्नुहोस्" बाट सुरु गर्नुहोस्।');
   });
   logMsg(log,'क्रमैसँग 1️⃣ → 2️⃣ → 3️⃣ थिच्नुहोस्।');
+})();
+
+/* ============ T13: VLSM ============ */
+(function(){
+  const goBtn=document.getElementById('t13-go');
+  const resetBtn=document.getElementById('t13-reset');
+  const log=document.getElementById('t13log');
+  const result=document.getElementById('t13-result');
+  const plan=[
+    {name:'Sales', need:50, prefix:26, usable:62, start:'192.168.1.0'},
+    {name:'IT', need:20, prefix:27, usable:30, start:'192.168.1.64'},
+    {name:'Finance', need:10, prefix:28, usable:14, start:'192.168.1.96'},
+    {name:'Router-to-Router Link', need:2, prefix:30, usable:2, start:'192.168.1.112'}
+  ];
+  goBtn.addEventListener('click', async ()=>{
+    goBtn.disabled=true; clearLog(log); result.innerHTML='';
+    logMsg(log,'192.168.1.0/24 लाई चाहिने Host अनुसार बाँड्दैछ...');
+    for(const p of plan){
+      await sleep(500);
+      logMsg(log,p.name+': '+p.need+' host चाहियो → /'+p.prefix+' दिइयो ('+p.usable+' usable)');
+      const tr=document.createElement('tr');
+      tr.innerHTML='<td>'+p.name+'</td><td>'+p.start+'/'+p.prefix+'</td><td>'+p.usable+'</td>';
+      result.appendChild(tr);
+    }
+    logMsg(log,'✅ हरेक department लाई ठ्याक्कै चाहिने जति IP मिल्यो — फालतु waste भएन।');
+    goBtn.disabled=false;
+  });
+  resetBtn.addEventListener('click', ()=>{
+    clearLog(log); result.innerHTML='<tr><td colspan="3" style="color:var(--text-dim)">— अझै allocate गरिएको छैन —</td></tr>';
+    logMsg(log,'Reset भयो।');
+  });
+  logMsg(log,'"VLSM Allocate गर्नुहोस्" थिच्नुहोस्।');
+})();
+
+/* ============ T14: CIDR Summarization ============ */
+(function(){
+  const goBtn=document.getElementById('t14-go');
+  const resetBtn=document.getElementById('t14-reset');
+  const log=document.getElementById('t14log');
+  goBtn.addEventListener('click', async ()=>{
+    goBtn.disabled=true; clearLog(log);
+    logMsg(log,'4 वटा /24 network को common binary prefix जाँचिँदैछ...');
+    await sleep(500);
+    logMsg(log,'192.168.0.0, .1.0, .2.0, .3.0 — सुरुका 22 bit सबैमा उस्तै छन्');
+    await sleep(500);
+    logMsg(log,'✅ Summary Route: 192.168.0.0/22');
+    await sleep(400);
+    logMsg(log,'ℹ️ अब routing table मा 4 वटा line को सट्टा 1 वटा मात्र line राख्दा पुग्छ — router छिटो हुन्छ।');
+    goBtn.disabled=false;
+  });
+  resetBtn.addEventListener('click', ()=>{ clearLog(log); logMsg(log,'Reset भयो।'); });
+  logMsg(log,'"Summarize गर्नुहोस्" थिच्नुहोस्।');
+})();
+
+/* ============ T15: Static vs Dynamic Routing ============ */
+(function(){
+  const failBtn=document.getElementById('t15-fail');
+  const staticBtn=document.getElementById('t15-static');
+  const dynamicBtn=document.getElementById('t15-dynamic');
+  const resetBtn=document.getElementById('t15-reset');
+  const log=document.getElementById('t15log');
+  const track=document.getElementById('t15track');
+  const dot=document.getElementById('t15dot');
+  const a=document.getElementById('t15-a'), b=document.getElementById('t15-b');
+  const primaryArrow=document.getElementById('t15-primary');
+  let failed=false;
+  failBtn.addEventListener('click', ()=>{
+    failed=!failed;
+    primaryArrow.classList.toggle('cut',failed);
+    primaryArrow.textContent = failed ? '✗ Primary (Fail भयो) ✗' : '— Primary —';
+    logMsg(log, failed ? '⚡ Primary link fail भयो!' : '✅ Primary link फेरि ठीक भयो।');
+  });
+  staticBtn.addEventListener('click', async ()=>{
+    if(!failed){ logMsg(log,'Static route ले Primary link मार्फत सजिलै पुर्‍यायो ✅'); await moveDotThroughNodes(track,dot,[a,b],500); dot.classList.remove('show'); return; }
+    logMsg(log,'📍 Static route ले अझै Primary link नै प्रयोग गर्न खोज्यो...');
+    await sleep(500);
+    logMsg(log,'❌ Packet पुगेन — Static route ले अर्को बाटो आफै थाहा पाउँदैन, network admin ले हातले बदल्नुपर्छ।');
+  });
+  dynamicBtn.addEventListener('click', async ()=>{
+    if(!failed){ logMsg(log,'Dynamic (OSPF) ले पनि Primary link मार्फत नै पठायो ✅'); await moveDotThroughNodes(track,dot,[a,b],500); dot.classList.remove('show'); return; }
+    logMsg(log,'🔄 OSPF ले Primary link fail भएको तुरुन्तै थाहा पायो...');
+    await sleep(500);
+    logMsg(log,'✅ OSPF ले आफै Backup link भेट्टायो र packet त्यहीबाट पठायो — admin ले केही गर्नु परेन!');
+    await moveDotThroughNodes(track,dot,[a,b],500); dot.classList.remove('show');
+  });
+  resetBtn.addEventListener('click', ()=>{
+    failed=false; primaryArrow.classList.remove('cut'); primaryArrow.textContent='— Primary —';
+    clearLog(log); logMsg(log,'Reset भयो।');
+  });
+  logMsg(log,'पहिले Link Fail गराउनुहोस्, अनि Static र Dynamic दुवै प्रयास गरेर तुलना गर्नुहोस्।');
+})();
+
+/* ============ T16: Routing Protocols ============ */
+(function(){
+  const buttons=document.querySelectorAll('.t16-btn');
+  const detail=document.getElementById('t16-detail');
+  const info={
+    rip:{title:'RIP (Routing Information Protocol)', metric:'Hop Count (जति कम router हुँदै जान्छ, उति राम्रो)', conv:'ढिलो (मिनेट लाग्न सक्छ)', note:'सानो network को लागि सजिलो, तर ठूलो network मा राम्रो होइन — max 15 hop मात्र।'},
+    ospf:{title:'OSPF (Open Shortest Path First)', metric:'Cost (Bandwidth मा आधारित)', conv:'छिटो (सेकेन्डमै)', note:'ठूलो enterprise network मा सबैभन्दा बढी प्रयोग हुन्छ, industry standard।'},
+    eigrp:{title:'EIGRP (Cisco को Protocol)', metric:'Bandwidth + Delay मिलाएर composite metric', conv:'धेरै छिटो', note:'Cisco device हरूमा मात्र राम्रोसँग चल्छ, RIP र OSPF दुवैको फाइदा लिन्छ।'}
+  };
+  function render(key){
+    const d=info[key];
+    detail.innerHTML='<h3 style="font-family:var(--display);color:var(--cyan);margin-bottom:8px;">'+d.title+'</h3>'+
+      '<p style="margin-bottom:6px;"><b style="color:var(--amber)">Metric:</b> '+d.metric+'</p>'+
+      '<p style="margin-bottom:6px;"><b style="color:var(--amber)">Convergence Speed:</b> '+d.conv+'</p>'+
+      '<p>'+d.note+'</p>';
+  }
+  buttons.forEach(b=>b.addEventListener('click', ()=>{
+    buttons.forEach(x=>x.classList.remove('primary'));
+    b.classList.add('primary');
+    render(b.dataset.p);
+  }));
+  render('rip');
+})();
+
+/* ============ T17: ACL ============ */
+(function(){
+  const hrBtn=document.getElementById('t17-hr');
+  const netBtn=document.getElementById('t17-net');
+  const resetBtn=document.getElementById('t17-reset');
+  const log=document.getElementById('t17log');
+  hrBtn.addEventListener('click', ()=>{
+    logMsg(log,'Finance → HR Server: Rule 10 (deny) मिल्यो → 🚫 Blocked!');
+  });
+  netBtn.addEventListener('click', ()=>{
+    logMsg(log,'Finance → Internet: Rule 10 नमिलेकोले Rule 20 (permit) मा गयो → ✅ Allowed!');
+  });
+  resetBtn.addEventListener('click', ()=>{ clearLog(log); logMsg(log,'Reset भयो।'); });
+  logMsg(log,'दुवै traffic पठाएर ACL ले कसरी छान्छ हेर्नुहोस्।');
+})();
+
+/* ============ T18: NAT Types ============ */
+(function(){
+  const goBtn=document.getElementById('t18-go');
+  const resetBtn=document.getElementById('t18-reset');
+  const sel=document.getElementById('t18-type');
+  const log=document.getElementById('t18log');
+  goBtn.addEventListener('click', async ()=>{
+    goBtn.disabled=true; clearLog(log);
+    const type=sel.value;
+    const devices=['PC1 (192.168.1.10)','PC2 (192.168.1.11)','PC3 (192.168.1.12)'];
+    if(type==='static'){
+      logMsg(log,'Static NAT: हरेक device लाई पहिल्यै तोकिएको fixed public IP मिल्छ।');
+      for(const [i,d] of devices.entries()){ await sleep(400); logMsg(log,d+' → 103.20.10.'+(i+1)+' (सधैं उही)'); }
+    } else if(type==='dynamic'){
+      logMsg(log,'Dynamic NAT: Public IP Pool (103.20.10.1 – .3) बाट फुर्सद भएको जुनसुकै IP मिल्छ।');
+      for(const d of devices){ await sleep(400); logMsg(log,d+' → 103.20.10.'+randInt(1,3)+' (pool बाट)'); }
+      logMsg(log,'⚠️ Pool भन्दा बढी device एकैचोटि जोडिन खोजे केही device लाई IP भेट्टिँदैन।');
+    } else {
+      logMsg(log,'PAT: सबै device ले एउटै Public IP शेयर गर्छन्, port number ले फरक छुट्याउँछ।');
+      for(const d of devices){ await sleep(400); logMsg(log,d+' → 103.20.10.1:'+randInt(20000,60000)); }
+      logMsg(log,'✅ एउटै Public IP बाट धेरै device — घर router मा सबैभन्दा बढी यही प्रयोग हुन्छ।');
+    }
+    goBtn.disabled=false;
+  });
+  resetBtn.addEventListener('click', ()=>{ clearLog(log); logMsg(log,'Reset भयो।'); });
+  logMsg(log,'NAT Type छानेर "Internet पठाउनुहोस्" थिच्नुहोस्।');
+})();
+
+/* ============ T19: Firewall Zones ============ */
+(function(){
+  const b1=document.getElementById('t19-1'), b2=document.getElementById('t19-2'), b3=document.getElementById('t19-3');
+  const resetBtn=document.getElementById('t19-reset');
+  const log=document.getElementById('t19log');
+  b1.addEventListener('click', ()=>logMsg(log,'Internet → DMZ (port 80): ✅ Allowed — Web server ले public traffic लिनैपर्छ।'));
+  b2.addEventListener('click', ()=>logMsg(log,'Internet → LAN (सीधै): 🚫 Blocked — Untrusted zone बाट Trusted zone मा सीधै जान पाइँदैन।'));
+  b3.addEventListener('click', ()=>logMsg(log,'LAN → Internet: ✅ Allowed — भित्रबाट बाहिर जान सामान्यतया अनुमति हुन्छ।'));
+  resetBtn.addEventListener('click', ()=>{ clearLog(log); logMsg(log,'Reset भयो।'); });
+  logMsg(log,'फरक-फरक zone बीचको traffic परीक्षण गर्नुहोस्।');
+})();
+
+/* ============ T20: VPN ============ */
+(function(){
+  const plainBtn=document.getElementById('t20-plain');
+  const vpnBtn=document.getElementById('t20-vpn');
+  const resetBtn=document.getElementById('t20-reset');
+  const log=document.getElementById('t20log');
+  const track=document.getElementById('t20track');
+  const dot=document.getElementById('t20dot');
+  const a=document.getElementById('t20-a'), mid=document.getElementById('t20-mid'), b=document.getElementById('t20-b');
+  plainBtn.addEventListener('click', async ()=>{
+    plainBtn.disabled=true; vpnBtn.disabled=true;
+    logMsg(log,'🔓 Data plain text मै Internet हुँदै पठाइयो...');
+    await moveDotThroughNodes(track,dot,[a,mid,b],550);
+    dot.classList.remove('show');
+    logMsg(log,'⚠️ बीचमा कसैले traffic समात्यो भने data सजिलै पढ्न सकिन्छ — खतरा!');
+    plainBtn.disabled=false; vpnBtn.disabled=false;
+  });
+  vpnBtn.addEventListener('click', async ()=>{
+    plainBtn.disabled=true; vpnBtn.disabled=true;
+    logMsg(log,'🔒 Data पहिले Encrypt गरियो, अनि VPN Tunnel भित्र पठाइयो...');
+    mid.classList.add('on');
+    await moveDotThroughNodes(track,dot,[a,mid,b],550);
+    dot.classList.remove('show'); mid.classList.remove('on');
+    logMsg(log,'✅ बीचमा कसैले समाते पनि data अर्थहीन कोड मात्र देख्छ — सुरक्षित!');
+    plainBtn.disabled=false; vpnBtn.disabled=false;
+  });
+  resetBtn.addEventListener('click', ()=>{ clearLog(log); logMsg(log,'Reset भयो।'); });
+  logMsg(log,'दुवै तरिका चलाएर फरक हेर्नुहोस्।');
+})();
+
+/* ============ T21: Wireless Security ============ */
+(function(){
+  const goBtn=document.getElementById('t21-go');
+  const sel=document.getElementById('t21-sec');
+  const log=document.getElementById('t21log');
+  const info={
+    open:'🔴 जोखिम धेरै — कुनै encryption छैन, जो कोहीले traffic पढ्न सक्छ। Public place मा जोगिनु राम्रो।',
+    wep:'🟠 जोखिम — पुरानो र सजिलै crack हुने encryption, अहिले प्रयोग गर्न हुँदैन।',
+    wpa2:'🟡 राम्रो — AES encryption प्रयोग गर्छ, धेरैजसो घर/office मा यही चलेको हुन्छ।',
+    wpa3:'🟢 सबैभन्दा सुरक्षित — नयाँ standard, brute-force attack बाट पनि जोगाउँछ।'
+  };
+  goBtn.addEventListener('click', ()=>{
+    logMsg(log,sel.options[sel.selectedIndex].text+' मा जोडियो → '+info[sel.value]);
+  });
+  logMsg(log,'Security type छानेर जोड्नुहोस्।');
+})();
+
+/* ============ T22: STP ============ */
+(function(){
+  const noloopBtn=document.getElementById('t22-noloop');
+  const stpBtn=document.getElementById('t22-stp');
+  const resetBtn=document.getElementById('t22-reset');
+  const log=document.getElementById('t22log');
+  const track=document.getElementById('t22track');
+  const dot=document.getElementById('t22dot');
+  const sw1=document.getElementById('t22-sw1'), sw2=document.getElementById('t22-sw2');
+  const link2label=document.getElementById('t22-link2label');
+  noloopBtn.addEventListener('click', async ()=>{
+    noloopBtn.disabled=true; stpBtn.disabled=true; clearLog(log);
+    logMsg(log,'⚡ Broadcast frame Switch 1 बाट पठाइयो — तर 2 वटै link खुला छन्...');
+    for(let i=0;i<4;i++){
+      await moveDotThroughNodes(track,dot,[sw1,sw2],350);
+      await moveDotThroughNodes(track,dot,[sw2,sw1],350);
+      logMsg(log,'🔁 उही frame फेरि घुमेर आयो... (loop #'+(i+1)+')');
+    }
+    dot.classList.remove('show');
+    logMsg(log,'💥 Broadcast Storm! Frame अनन्तसम्म घुम्दै जान्छ, network साह्रै slow हुन्छ।');
+    noloopBtn.disabled=false; stpBtn.disabled=false;
+  });
+  stpBtn.addEventListener('click', async ()=>{
+    noloopBtn.disabled=true; stpBtn.disabled=true; clearLog(log);
+    link2label.innerHTML='↔ Link 2 <b style="color:var(--red)">(STP द्वारा Blocked — backup को लागि मात्र)</b> ↔';
+    logMsg(log,'🛡️ STP ले 2 वटा link भेट्यो, एउटालाई Blocking state मा राख्यो।');
+    await sleep(400);
+    logMsg(log,'▶ अब broadcast frame Link 1 बाट मात्र जान्छ:');
+    await moveDotThroughNodes(track,dot,[sw1,sw2],500);
+    dot.classList.remove('show');
+    logMsg(log,'✅ Loop भएन! अनि Link 1 कहिल्यै fail भयो भने STP ले तुरुन्तै Link 2 लाई सक्रिय बनाउँछ।');
+    noloopBtn.disabled=false; stpBtn.disabled=false;
+  });
+  resetBtn.addEventListener('click', ()=>{
+    clearLog(log); link2label.textContent='↔ Link 2 (redundant) ↔ पनि जोडिएको छ';
+    logMsg(log,'Reset भयो।');
+  });
+  logMsg(log,'पहिले "STP बिना" चलाएर समस्या हेर्नुहोस्, अनि "STP सक्रिय" चलाएर समाधान हेर्नुहोस्।');
+})();
+
+/* ============ T23: EtherChannel ============ */
+(function(){
+  const failBtn=document.getElementById('t23-fail');
+  const resetBtn=document.getElementById('t23-reset');
+  const log=document.getElementById('t23log');
+  const l1=document.getElementById('t23-l1'), l2=document.getElementById('t23-l2');
+  const bw=document.getElementById('t23-bw');
+  let failed=false;
+  failBtn.addEventListener('click', ()=>{
+    failed=!failed;
+    if(failed){
+      l1.textContent='Link 1 (1 Gbps) ❌ Fail'; l1.classList.add('bad');
+      bw.textContent='कुल Bandwidth: 1 Gbps मात्र (Link 2 ले धानिरहेको छ) — तर connection टुटेन!';
+      logMsg(log,'⚡ Link 1 fail भयो — तर EtherChannel bundle मा भएकोले traffic स्वतः Link 2 बाट मात्र जान थाल्यो, downtime शून्य!');
+    } else {
+      l1.textContent='Link 1 (1 Gbps) ✅'; l1.classList.remove('bad');
+      bw.textContent='कुल Bandwidth: 2 Gbps';
+      logMsg(log,'✅ Link 1 फेरि ठीक भयो, फेरि 2 Gbps पूरा भयो।');
+    }
+  });
+  resetBtn.addEventListener('click', ()=>{
+    failed=false; l1.textContent='Link 1 (1 Gbps) ✅'; l1.classList.remove('bad');
+    bw.textContent='कुल Bandwidth: 2 Gbps'; clearLog(log); logMsg(log,'Reset भयो।');
+  });
+  logMsg(log,'"Link 1 Fail गराउनुहोस्" थिचेर के हुन्छ हेर्नुहोस्।');
+})();
+
+/* ============ T24: HSRP/VRRP ============ */
+(function(){
+  const failBtn=document.getElementById('t24-fail');
+  const sendBtn=document.getElementById('t24-send');
+  const resetBtn=document.getElementById('t24-reset');
+  const log=document.getElementById('t24log');
+  const track=document.getElementById('t24track');
+  const dot=document.getElementById('t24dot');
+  const pc=document.getElementById('t24-pc'), r1=document.getElementById('t24-r1'), r2=document.getElementById('t24-r2');
+  let r1down=false;
+  failBtn.addEventListener('click', ()=>{
+    r1down=!r1down;
+    if(r1down){
+      r1.textContent='📡 R1 (Down ❌)'; r1.classList.add('bad');
+      r2.textContent='📡 R2 (अब Active भयो ✅)'; r2.classList.add('on');
+      logMsg(log,'⚡ R1 down भयो! R2 ले Virtual IP (192.168.1.1) आफैले सम्हाल्यो — सेकेन्डभित्रै।');
+    } else {
+      r1.textContent='📡 R1 (Active)'; r1.classList.remove('bad');
+      r2.textContent='📡 R2 (Standby)'; r2.classList.remove('on');
+      logMsg(log,'✅ R1 फेरि ठीक भयो, फेरि Active बन्यो।');
+    }
+  });
+  sendBtn.addEventListener('click', async ()=>{
+    sendBtn.disabled=true;
+    const activeRouter = r1down ? r2 : r1;
+    logMsg(log,'PC ले Gateway (192.168.1.1) मा packet पठायो — PC लाई कुन router Active छ भन्ने थाहै हुँदैन।');
+    await moveDotThroughNodes(track,dot,[pc,activeRouter],550);
+    dot.classList.remove('show');
+    logMsg(log,'✅ Packet सफलतापूर्वक '+(r1down?'R2':'R1')+' मार्फत गयो — PC को config मा केही बदल्नु परेन!');
+    sendBtn.disabled=false;
+  });
+  resetBtn.addEventListener('click', ()=>{
+    r1down=false; r1.textContent='📡 R1 (Active)'; r1.classList.remove('bad');
+    r2.textContent='📡 R2 (Standby)'; r2.classList.remove('on');
+    clearLog(log); logMsg(log,'Reset भयो।');
+  });
+  logMsg(log,'"R1 Fail गराउनुहोस्" अनि "Packet पठाउनुहोस्" दुवै थिचेर हेर्नुहोस्।');
+})();
+
+/* ============ T25: Load Balancing ============ */
+(function(){
+  const sendBtn=document.getElementById('t25-send');
+  const resetBtn=document.getElementById('t25-reset');
+  const log=document.getElementById('t25log');
+  const servers=[document.getElementById('t25-s1'),document.getElementById('t25-s2'),document.getElementById('t25-s3')];
+  const counts=[document.getElementById('t25-c1'),document.getElementById('t25-c2'),document.getElementById('t25-c3')];
+  let idx=0, total=[0,0,0];
+  sendBtn.addEventListener('click', ()=>{
+    servers.forEach(s=>s.classList.remove('on'));
+    servers[idx].classList.add('on');
+    total[idx]++;
+    counts[idx].textContent=total[idx];
+    logMsg(log,'Request → Server '+(idx+1)+' मा पठाइयो (Round-robin)');
+    idx=(idx+1)%3;
+  });
+  resetBtn.addEventListener('click', ()=>{
+    idx=0; total=[0,0,0];
+    servers.forEach(s=>s.classList.remove('on'));
+    counts.forEach(c=>c.textContent='0');
+    clearLog(log); logMsg(log,'Reset भयो।');
+  });
+  logMsg(log,'"Request पठाउनुहोस्" धेरैपटक थिचेर बाँडिने क्रम हेर्नुहोस्।');
+})();
+
+/* ============ T26: Cloud VPC ============ */
+(function(){
+  const b1=document.getElementById('t26-priv2net');
+  const b2=document.getElementById('t26-net2priv');
+  const resetBtn=document.getElementById('t26-reset');
+  const log=document.getElementById('t26log');
+  const track=document.getElementById('t26track');
+  const dot=document.getElementById('t26dot');
+  const priv=document.getElementById('t26-priv'), nat=document.getElementById('t26-nat'),
+        igw=document.getElementById('t26-igw'), web=document.getElementById('t26-web');
+  b1.addEventListener('click', async ()=>{
+    b1.disabled=true;
+    logMsg(log,'Database (Private Subnet) सँग सीधै Internet पहुँच छैन, त्यसैले NAT Gateway हुँदै जान्छ...');
+    await moveDotThroughNodes(track,dot,[priv,nat,igw],500);
+    dot.classList.remove('show');
+    logMsg(log,'✅ Update download भयो — तर बाहिरबाट कसैले Database लाई सीधै देख्न/पहुँच गर्न सक्दैन (सुरक्षित)।');
+    b1.disabled=false;
+  });
+  b2.addEventListener('click', async ()=>{
+    b2.disabled=true;
+    logMsg(log,'Internet बाट सीधै Database (Private Subnet) मा पुग्ने प्रयास...');
+    await sleep(500);
+    logMsg(log,'🚫 Blocked — Private Subnet को कुनै Public IP वा Internet Gateway route नै छैन।');
+    b2.disabled=false;
+  });
+  resetBtn.addEventListener('click', ()=>{ clearLog(log); logMsg(log,'Reset भयो।'); });
+  logMsg(log,'दुवै दिशाबाट traffic पठाएर Public vs Private Subnet को फरक हेर्नुहोस्।');
+})();
+
+/* ============ T27: Security Threats ============ */
+(function(){
+  const buttons=document.querySelectorAll('.t27-btn');
+  const log=document.getElementById('t27log');
+  const info={
+    phishing:'🎣 Phishing: Attacker ले साँचो जस्तै देखिने email/website पठाएर password वा card details चोर्न खोज्छ। बचाव: link क्लिक गर्नुअघि sender र URL राम्ररी जाँच्नुहोस्।',
+    mitm:'🕵️ Man-in-the-Middle: Attacker ले दुई पक्षको बीचमा बसेर traffic चोर्छ वा बदल्छ (जस्तै असुरक्षित public Wi-Fi मा)। बचाव: HTTPS र VPN प्रयोग गर्नुहोस्।',
+    ddos:'💥 DDoS: हजारौं compromised device (botnet) ले एकैचोटि एउटा server मा अत्यधिक traffic पठाएर त्यसलाई ठप्प पार्छ। बचाव: traffic filtering र CDN/Anti-DDoS service प्रयोग गर्नुहोस्।'
+  };
+  buttons.forEach(b=>b.addEventListener('click', ()=>{
+    buttons.forEach(x=>x.classList.remove('primary'));
+    b.classList.add('primary');
+    clearLog(log);
+    logMsg(log,info[b.dataset.t]);
+  }));
+  logMsg(log,'माथिबाट कुनै एउटा threat छानेर हेर्नुहोस्।');
+})();
+
+/* ============ T28: IPv6 ============ */
+(function(){
+  const goBtn=document.getElementById('t28-go');
+  const log=document.getElementById('t28log');
+  function hex(){ return Math.floor(Math.random()*65536).toString(16).padStart(4,'0'); }
+  goBtn.addEventListener('click', ()=>{
+    const addr=[hex(),hex(),hex(),hex(),hex(),hex(),hex(),hex()].join(':');
+    logMsg(log,'Generated IPv6: '+addr);
+    logMsg(log,'IPv4 (32-bit) भन्दा IPv6 (128-bit) मा धेरै गुणा बढी address सम्भव छ — भविष्यमा arबौं IoT device लाई पुग्छ।');
+  });
+  logMsg(log,'"IPv6 Address Generate गर्नुहोस्" थिच्नुहोस्।');
+})();
+
+/* ============ T29: QoS ============ */
+(function(){
+  const noBtn=document.getElementById('t29-no');
+  const yesBtn=document.getElementById('t29-yes');
+  const resetBtn=document.getElementById('t29-reset');
+  const log=document.getElementById('t29log');
+  noBtn.addEventListener('click', async ()=>{
+    noBtn.disabled=true; yesBtn.disabled=true; clearLog(log);
+    logMsg(log,'📹 Video Call, 📁 File Download, 📧 Email — सबैलाई बराबर treat गरियो...');
+    await sleep(600);
+    logMsg(log,'⚠️ File Download ले धेरै bandwidth खायो → Video Call अड्किन थाल्यो, आवाज कट्दै गयो।');
+    noBtn.disabled=false; yesBtn.disabled=false;
+  });
+  yesBtn.addEventListener('click', async ()=>{
+    noBtn.disabled=true; yesBtn.disabled=true; clearLog(log);
+    logMsg(log,'📹 Video Call लाई "High Priority" मार्क गरियो...');
+    await sleep(600);
+    logMsg(log,'✅ Video Call लाई पहिले bandwidth दिइयो, बाँकीबाट File Download अलि पर्खियो — Call एकदम smooth चल्यो।');
+    noBtn.disabled=false; yesBtn.disabled=false;
+  });
+  resetBtn.addEventListener('click', ()=>{ clearLog(log); logMsg(log,'Reset भयो।'); });
+  logMsg(log,'दुवै अवस्था चलाएर भिन्नता तुलना गर्नुहोस्।');
+})();
+
+/* ============ T30: Troubleshooting ============ */
+(function(){
+  const stepBtn=document.getElementById('t30-step');
+  const resetBtn=document.getElementById('t30-reset');
+  const log=document.getElementById('t30log');
+  const steps=[
+    '1️⃣ Cable/Wi-Fi जडान जाँच्नुहोस् → ✅ ठीक छ',
+    '2️⃣ IP Address जाँच्नुहोस् (ipconfig) → ✅ 192.168.1.15 देखियो',
+    '3️⃣ Gateway लाई ping गर्नुहोस् (192.168.1.1) → ✅ जवाफ आयो',
+    '4️⃣ DNS Server लाई ping गर्नुहोस् → ❌ जवाफ आएन!',
+    '🔍 समस्या भेटियो: DNS सम्म पुगेन। समाधान: DNS settings जाँच्नुहोस् वा ISP लाई सम्पर्क गर्नुहोस्।'
+  ];
+  let idx=0;
+  stepBtn.addEventListener('click', ()=>{
+    if(idx>=steps.length){ logMsg(log,'✅ Troubleshooting सकियो। Reset थिचेर फेरि सुरु गर्नुहोस्।'); return; }
+    logMsg(log,steps[idx]);
+    idx++;
+    if(idx>=steps.length) stepBtn.textContent='✓ सकियो';
+  });
+  resetBtn.addEventListener('click', ()=>{
+    idx=0; stepBtn.textContent='▶ अर्को step जाँच्नुहोस्';
+    clearLog(log); logMsg(log,'Reset भयो। Step-by-step जाँच सुरु गर्नुहोस्।');
+  });
+  logMsg(log,'"अर्को step जाँच्नुहोस्" क्रमैसँग थिचेर समस्या पत्ता लगाउनुहोस्।');
 })();
 
 /* ============ Quiz (reused) ============ */

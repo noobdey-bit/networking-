@@ -3,8 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Interactive networking simulator for learning core networking concepts in Nepali.">
-<meta name="theme-color" content="#0a0f1a">
 <title>नेटवर्किङ सिमुलेटर — हातेखेल गरेर सिक्नुहोस्</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,16 +10,15 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<a class="skip-link" href="#main-content">मुख्य सामग्रीमा जानुहोस्</a>
 <div class="shell">
 
-  <nav class="side" aria-label="Main navigation">
+  <nav class="side">
     <div class="brand-row">
       <div class="brand"><span class="dot-pulse"></span><div>नेटवर्किङ सिमुलेटर<small>हातेखेल गरेर सिक्नुहोस्</small></div></div>
       <button id="themeToggle" title="Dark / Light mode"><span class="knob">🌙</span></button>
     </div>
     <div class="progress-wrap">
-      <div class="progress-label"><span id="progressText">0 / 12 पूरा भयो</span></div>
+      <div class="progress-label"><span id="progressText">0 / 30 पूरा भयो</span></div>
       <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
     </div>
     <ul class="navlist">
@@ -38,11 +35,30 @@
       <li><a class="navgo" data-target="t10" data-topic="10"><span class="num">10</span> VLAN<span class="check">✓</span></a></li>
       <li><a class="navgo" data-target="t11" data-topic="11"><span class="num">11</span> Subnetting<span class="check">✓</span></a></li>
       <li><a class="navgo" data-target="t12" data-topic="12"><span class="num">12</span> DNS, DHCP, NAT<span class="check">✓</span></a></li>
+      <li style="margin-top:12px;padding:6px 10px;font-family:var(--mono);font-size:.65rem;color:var(--amber);letter-spacing:1px;">— ADVANCED / JOB PREP —</li>
+      <li><a class="navgo" data-target="t13" data-topic="13"><span class="num">13</span> VLSM Subnetting<span class="check">✓</span></a></li>
+      <li><a class="navgo" data-target="t14" data-topic="14"><span class="num">14</span> CIDR Summarization<span class="check">✓</span></a></li>
+      <li><a class="navgo" data-target="t15" data-topic="15"><span class="num">15</span> Static बनाम Dynamic Routing<span class="check">✓</span></a></li>
+      <li><a class="navgo" data-target="t16" data-topic="16"><span class="num">16</span> RIP / OSPF / EIGRP<span class="check">✓</span></a></li>
+      <li><a class="navgo" data-target="t17" data-topic="17"><span class="num">17</span> ACL<span class="check">✓</span></a></li>
+      <li><a class="navgo" data-target="t18" data-topic="18"><span class="num">18</span> NAT Types<span class="check">✓</span></a></li>
+      <li><a class="navgo" data-target="t19" data-topic="19"><span class="num">19</span> Firewall र Zones<span class="check">✓</span></a></li>
+      <li><a class="navgo" data-target="t20" data-topic="20"><span class="num">20</span> VPN<span class="check">✓</span></a></li>
+      <li><a class="navgo" data-target="t21" data-topic="21"><span class="num">21</span> Wireless Security<span class="check">✓</span></a></li>
+      <li><a class="navgo" data-target="t22" data-topic="22"><span class="num">22</span> Spanning Tree (STP)<span class="check">✓</span></a></li>
+      <li><a class="navgo" data-target="t23" data-topic="23"><span class="num">23</span> EtherChannel<span class="check">✓</span></a></li>
+      <li><a class="navgo" data-target="t24" data-topic="24"><span class="num">24</span> HSRP/VRRP<span class="check">✓</span></a></li>
+      <li><a class="navgo" data-target="t25" data-topic="25"><span class="num">25</span> Load Balancing<span class="check">✓</span></a></li>
+      <li><a class="navgo" data-target="t26" data-topic="26"><span class="num">26</span> Cloud Networking (VPC)<span class="check">✓</span></a></li>
+      <li><a class="navgo" data-target="t27" data-topic="27"><span class="num">27</span> Security Threats<span class="check">✓</span></a></li>
+      <li><a class="navgo" data-target="t28" data-topic="28"><span class="num">28</span> IPv6 Basics<span class="check">✓</span></a></li>
+      <li><a class="navgo" data-target="t29" data-topic="29"><span class="num">29</span> QoS<span class="check">✓</span></a></li>
+      <li><a class="navgo" data-target="t30" data-topic="30"><span class="num">30</span> Troubleshooting<span class="check">✓</span></a></li>
       <li class="quiz-link"><a class="navgo" data-target="quiz">✎ आफूलाई जाँच्नुहोस् (Quiz)</a></li>
     </ul>
   </nav>
 
-  <main id="main-content" tabindex="-1">
+  <main>
 
     <!-- HOME -->
     <div class="page" id="page-home">
@@ -66,8 +82,26 @@
         <div class="topic-card navgo" data-target="t10"><div class="tnum">10</div><h3>VLAN</h3><p>एउटै switch मा फरक department अलग राख्ने प्रयास गर्नुहोस्।</p></div>
         <div class="topic-card navgo" data-target="t11"><div class="tnum">11</div><h3>Subnetting</h3><p>Prefix बदलेर subnet र usable address आफै गणना गर्नुहोस्।</p></div>
         <div class="topic-card navgo" data-target="t12"><div class="tnum">12</div><h3>DNS, DHCP, NAT</h3><p>नयाँ phone Wi-Fi मा जोड्दा ३ वटै काम क्रमैसँग हेर्नुहोस्।</p></div>
+        <div class="topic-card navgo" data-target="t13"><div class="tnum">13</div><h3>VLSM Subnetting</h3><p>फरक-फरक department लाई host अनुसार optimal subnet बाँड्नुहोस्।</p></div>
+        <div class="topic-card navgo" data-target="t14"><div class="tnum">14</div><h3>CIDR Summarization</h3><p>४ वटा network लाई एउटै summary route मा जोड्नुहोस्।</p></div>
+        <div class="topic-card navgo" data-target="t15"><div class="tnum">15</div><h3>Static बनाम Dynamic Routing</h3><p>Link fail हुँदा कुनले आफै बाटो बदल्छ हेर्नुहोस्।</p></div>
+        <div class="topic-card navgo" data-target="t16"><div class="tnum">16</div><h3>RIP / OSPF / EIGRP</h3><p>Routing protocol हरूको metric र speed तुलना गर्नुहोस्।</p></div>
+        <div class="topic-card navgo" data-target="t17"><div class="tnum">17</div><h3>ACL</h3><p>कुन traffic allow, कुन deny हुन्छ rule बनाएर जाँच्नुहोस्।</p></div>
+        <div class="topic-card navgo" data-target="t18"><div class="tnum">18</div><h3>NAT Types</h3><p>Static, Dynamic, र PAT कसरी फरक-फरक translate गर्छन्।</p></div>
+        <div class="topic-card navgo" data-target="t19"><div class="tnum">19</div><h3>Firewall र Zones</h3><p>Trusted/Untrusted zone बीच traffic कहाँ रोकिन्छ हेर्नुहोस्।</p></div>
+        <div class="topic-card navgo" data-target="t20"><div class="tnum">20</div><h3>VPN</h3><p>Encrypted tunnel भएको vs नभएको traffic तुलना गर्नुहोस्।</p></div>
+        <div class="topic-card navgo" data-target="t21"><div class="tnum">21</div><h3>Wireless Security</h3><p>Open, WEP, WPA2, WPA3 को सुरक्षा स्तर जाँच्नुहोस्।</p></div>
+        <div class="topic-card navgo" data-target="t22"><div class="tnum">22</div><h3>Spanning Tree (STP)</h3><p>Switch loop कसरी रोकिन्छ आफै चलाएर हेर्नुहोस्।</p></div>
+        <div class="topic-card navgo" data-target="t23"><div class="tnum">23</div><h3>EtherChannel</h3><p>Link बण्डल गरेर bandwidth र failover जाँच्नुहोस्।</p></div>
+        <div class="topic-card navgo" data-target="t24"><div class="tnum">24</div><h3>HSRP/VRRP</h3><p>Primary router मर्दा backup आफै सक्रिय हुने हेर्नुहोस्।</p></div>
+        <div class="topic-card navgo" data-target="t25"><div class="tnum">25</div><h3>Load Balancing</h3><p>Request हरू round-robin मा server बीच बाँडिएको हेर्नुहोस्।</p></div>
+        <div class="topic-card navgo" data-target="t26"><div class="tnum">26</div><h3>Cloud Networking (VPC)</h3><p>Public र Private subnet को फरक cloud मा हेर्नुहोस्।</p></div>
+        <div class="topic-card navgo" data-target="t27"><div class="tnum">27</div><h3>Security Threats</h3><p>Phishing, MITM, DDoS कसरी हुन्छन् — छोटो simulation।</p></div>
+        <div class="topic-card navgo" data-target="t28"><div class="tnum">28</div><h3>IPv6 Basics</h3><p>IPv4 भन्दा IPv6 किन धेरै ठूलो हो हेर्नुहोस्।</p></div>
+        <div class="topic-card navgo" data-target="t29"><div class="tnum">29</div><h3>QoS</h3><p>Video call लाई priority दिँदा के फरक पर्छ जाँच्नुहोस्।</p></div>
+        <div class="topic-card navgo" data-target="t30"><div class="tnum">30</div><h3>Troubleshooting</h3><p>"Website खुल्दैन" समस्या step-by-step पत्ता लगाउनुहोस्।</p></div>
       </div>
-      <footer>नेटवर्किङ पूर्ण नोट्स · मूल १२ topic बाट सिमुलेटर सहित तयार पारिएको नेपाली अध्ययन सामग्री।</footer>
+      <footer>नेटवर्किङ पूर्ण नोट्स · ३० topic (Basic + Advanced/Job-prep) बाट सिमुलेटर सहित तयार पारिएको नेपाली अध्ययन सामग्री।</footer>
     </div>
 
     <!-- T1 -->
@@ -401,7 +435,412 @@
           <div class="sim-log" id="t12log"></div>
         </div>
       </div>
-      <div class="page-nav"><a class="navgo" data-target="t11">← अघिल्लो</a><a class="navgo" data-target="quiz">अर्को: Quiz दिनुहोस् →</a></div>
+      <div class="page-nav"><a class="navgo" data-target="t11">← अघिल्लो</a><a class="navgo" data-target="t13">अर्को: VLSM Subnetting →</a></div>
+    </div>
+
+    <!-- T13 -->
+    <div class="page" id="page-t13">
+      <div class="topic-head"><div class="badge">13</div><h2>VLSM (Variable Length Subnet Masking)</h2><button class="mark-read" data-topic="13">○ पढिसकें</button></div>
+      <div class="topic-body">
+        <p><strong>VLSM</strong> ले हरेक department लाई चाहिने host संख्या अनुसार फरक-फरक साइजको subnet दिन्छ — यसले IP address <em>waste</em> हुनबाट जोगाउँछ। सबैलाई एउटै साइज (जस्तै /26) दिँदा साना department मा धेरै IP खेर जान्छ।</p>
+        <div class="sim-box">
+          <div class="sim-title">192.168.1.0/24 लाई VLSM ले बाँड्ने Simulator</div>
+          <table>
+            <thead><tr><th>Department</th><th>चाहिने Host</th></tr></thead>
+            <tbody>
+              <tr><td>Sales</td><td>50</td></tr>
+              <tr><td>IT</td><td>20</td></tr>
+              <tr><td>Finance</td><td>10</td></tr>
+              <tr><td>Router-to-Router Link</td><td>2</td></tr>
+            </tbody>
+          </table>
+          <div class="sim-controls">
+            <button id="t13-go" class="primary">▶ VLSM Allocate गर्नुहोस्</button>
+            <button id="t13-reset">↺ Reset</button>
+          </div>
+          <table style="margin-top:10px;">
+            <thead><tr><th>Department</th><th>Subnet</th><th>Usable Host</th></tr></thead>
+            <tbody id="t13-result"><tr><td colspan="3" style="color:var(--text-dim)">— अझै allocate गरिएको छैन —</td></tr></tbody>
+          </table>
+          <div class="sim-log" id="t13log"></div>
+        </div>
+      </div>
+      <div class="page-nav"><a class="navgo" data-target="t12">← अघिल्लो</a><a class="navgo" data-target="t14">अर्को: CIDR Summarization →</a></div>
+    </div>
+
+    <!-- T14 -->
+    <div class="page" id="page-t14">
+      <div class="topic-head"><div class="badge">14</div><h2>CIDR र Route Summarization</h2><button class="mark-read" data-topic="14">○ पढिसकें</button></div>
+      <div class="topic-body">
+        <p><strong>Route Summarization</strong> ले धेरै वटा सानो network लाई एउटै ठूलो route मा जोड्छ — routing table सानो बनाउँछ र router को काम छिटो बनाउँछ।</p>
+        <div class="sim-box">
+          <div class="sim-title">4 Network लाई Summarize गर्ने Simulator</div>
+          <div class="flow">
+            <span class="step">192.168.0.0/24</span><span class="step">192.168.1.0/24</span>
+            <span class="step">192.168.2.0/24</span><span class="step">192.168.3.0/24</span>
+          </div>
+          <div class="sim-controls">
+            <button id="t14-go" class="primary">▶ Summarize गर्नुहोस्</button>
+            <button id="t14-reset">↺ Reset</button>
+          </div>
+          <div class="sim-log" id="t14log"></div>
+        </div>
+      </div>
+      <div class="page-nav"><a class="navgo" data-target="t13">← अघिल्लो</a><a class="navgo" data-target="t15">अर्को: Static बनाम Dynamic Routing →</a></div>
+    </div>
+
+    <!-- T15 -->
+    <div class="page" id="page-t15">
+      <div class="topic-head"><div class="badge">15</div><h2>Static बनाम Dynamic Routing</h2><button class="mark-read" data-topic="15">○ पढिसकें</button></div>
+      <div class="topic-body">
+        <p><strong>Static route</strong> हातले लेखिएको बाटो हो — link fail भयो भने आफै बदलिँदैन। <strong>Dynamic routing</strong> (जस्तै OSPF) ले link fail भएको आफै थाहा पाएर अर्को बाटो खोज्छ।</p>
+        <div class="sim-box">
+          <div class="sim-title">Primary Link Fail Simulator</div>
+          <div class="flow track" id="t15track">
+            <span class="step" id="t15-a">R1</span><span class="arrow" id="t15-primary">— Primary —</span>
+            <span class="step" id="t15-b">R2</span>
+            <div class="dot" id="t15dot"></div>
+          </div>
+          <div class="flow" style="margin-top:8px;font-size:.75rem;color:var(--text-dim)">(Backup link पनि R1-R2 बीच अस्तित्वमा छ, तर Static ले प्रयोग गर्दैन)</div>
+          <div class="sim-controls">
+            <button id="t15-fail" class="danger">⚡ Primary Link Fail गराउनुहोस्</button>
+            <button id="t15-static">📍 Static route ले पठाउने प्रयास</button>
+            <button id="t15-dynamic">🔄 Dynamic (OSPF) ले पठाउने प्रयास</button>
+            <button id="t15-reset">↺ Reset</button>
+          </div>
+          <div class="sim-log" id="t15log"></div>
+        </div>
+      </div>
+      <div class="page-nav"><a class="navgo" data-target="t14">← अघिल्लो</a><a class="navgo" data-target="t16">अर्को: RIP/OSPF/EIGRP →</a></div>
+    </div>
+
+    <!-- T16 -->
+    <div class="page" id="page-t16">
+      <div class="topic-head"><div class="badge">16</div><h2>Routing Protocol: RIP / OSPF / EIGRP</h2><button class="mark-read" data-topic="16">○ पढिसकें</button></div>
+      <div class="topic-body">
+        <p>Dynamic routing protocol हरूले बाटो छान्ने तरिका (<strong>metric</strong>) र नयाँ बाटो थाहा पाउने गति (<strong>convergence</strong>) फरक-फरक हुन्छ।</p>
+        <div class="sim-box">
+          <div class="sim-title">Protocol Comparison Simulator</div>
+          <div class="sim-controls">
+            <button class="t16-btn primary" data-p="rip">RIP</button>
+            <button class="t16-btn" data-p="ospf">OSPF</button>
+            <button class="t16-btn" data-p="eigrp">EIGRP</button>
+          </div>
+          <div id="t16-detail" class="diagram"></div>
+        </div>
+      </div>
+      <div class="page-nav"><a class="navgo" data-target="t15">← अघिल्लो</a><a class="navgo" data-target="t17">अर्को: ACL →</a></div>
+    </div>
+
+    <!-- T17 -->
+    <div class="page" id="page-t17">
+      <div class="topic-head"><div class="badge">17</div><h2>ACL (Access Control List)</h2><button class="mark-read" data-topic="17">○ पढिसकें</button></div>
+      <div class="topic-body">
+        <p><strong>ACL</strong> ले router/switch मा rule राखेर कुन traffic <em>permit</em> र कुन <em>deny</em> गर्ने भनी नियन्त्रण गर्छ।</p>
+        <div class="sim-box">
+          <div class="sim-title">Finance VLAN ACL Simulator</div>
+          <table>
+            <thead><tr><th>#</th><th>Rule</th></tr></thead>
+            <tbody>
+              <tr><td>10</td><td><code class="tag">deny</code> Finance → HR Server</td></tr>
+              <tr><td>20</td><td><code class="tag">permit</code> Finance → Internet (any)</td></tr>
+            </tbody>
+          </table>
+          <div class="sim-controls">
+            <button id="t17-hr">▶ Finance → HR Server पठाउने प्रयास</button>
+            <button id="t17-net" class="primary">▶ Finance → Internet पठाउने प्रयास</button>
+            <button id="t17-reset">↺ Reset</button>
+          </div>
+          <div class="sim-log" id="t17log"></div>
+        </div>
+      </div>
+      <div class="page-nav"><a class="navgo" data-target="t16">← अघिल्लो</a><a class="navgo" data-target="t18">अर्को: NAT Types →</a></div>
+    </div>
+
+    <!-- T18 -->
+    <div class="page" id="page-t18">
+      <div class="topic-head"><div class="badge">18</div><h2>NAT Types — Static, Dynamic, PAT</h2><button class="mark-read" data-topic="18">○ पढिसकें</button></div>
+      <div class="topic-body">
+        <p><strong>Static NAT</strong>: एउटा private IP सधैं उही public IP पाउँछ। <strong>Dynamic NAT</strong>: pool बाट जुनसुकै फुर्सद भएको public IP पाउँछ। <strong>PAT</strong> (सबैभन्दा सामान्य, घर router मा प्रयोग हुने): धेरै device एउटै public IP शेयर गर्छन्, port number ले छुट्याउँछ।</p>
+        <div class="sim-box">
+          <div class="sim-title">3 Device ले Internet Access गर्ने Simulator</div>
+          <div class="sim-controls">
+            <select class="sim-input" id="t18-type">
+              <option value="static">Static NAT</option>
+              <option value="dynamic">Dynamic NAT</option>
+              <option value="pat" selected>PAT (Port Address Translation)</option>
+            </select>
+            <button id="t18-go" class="primary">▶ 3 Device बाट Internet पठाउनुहोस्</button>
+            <button id="t18-reset">↺ Reset</button>
+          </div>
+          <div class="sim-log" id="t18log"></div>
+        </div>
+      </div>
+      <div class="page-nav"><a class="navgo" data-target="t17">← अघिल्लो</a><a class="navgo" data-target="t19">अर्को: Firewall र Zones →</a></div>
+    </div>
+
+    <!-- T19 -->
+    <div class="page" id="page-t19">
+      <div class="topic-head"><div class="badge">19</div><h2>Firewall र Security Zones</h2><button class="mark-read" data-topic="19">○ पढिसकें</button></div>
+      <div class="topic-body">
+        <p><strong>Firewall</strong> ले network लाई zone मा बाँड्छ — <code class="tag">Untrusted (Internet)</code>, <code class="tag">DMZ (Web Server)</code>, <code class="tag">Trusted (LAN)</code> — र zone बीचको traffic लाई rule अनुसार छान्छ।</p>
+        <div class="sim-box">
+          <div class="sim-title">Zone-based Firewall Simulator</div>
+          <div class="flow">
+            <span class="step">☁️ Internet (Untrusted)</span>
+            <span class="step">🌐 DMZ (Web Server)</span>
+            <span class="step">🏢 LAN (Trusted)</span>
+          </div>
+          <div class="sim-controls">
+            <button id="t19-1">Internet → DMZ (port 80)</button>
+            <button id="t19-2">Internet → LAN (सीधै)</button>
+            <button id="t19-3" class="primary">LAN → Internet</button>
+            <button id="t19-reset">↺ Reset</button>
+          </div>
+          <div class="sim-log" id="t19log"></div>
+        </div>
+      </div>
+      <div class="page-nav"><a class="navgo" data-target="t18">← अघिल्लो</a><a class="navgo" data-target="t20">अर्को: VPN →</a></div>
+    </div>
+
+    <!-- T20 -->
+    <div class="page" id="page-t20">
+      <div class="topic-head"><div class="badge">20</div><h2>VPN (Virtual Private Network)</h2><button class="mark-read" data-topic="20">○ पढिसकें</button></div>
+      <div class="topic-body">
+        <p><strong>VPN</strong> ले public internet माथि नै एउटा <em>encrypted tunnel</em> बनाउँछ, ताकि बीचमा कसैले data पढ्न/चोर्न नसकोस्।</p>
+        <div class="sim-box">
+          <div class="sim-title">Public Internet vs VPN Tunnel Simulator</div>
+          <div class="flow track" id="t20track">
+            <span class="step" id="t20-a">🏢 Office A</span><span class="arrow" id="t20-arrow">→</span>
+            <span class="step" id="t20-mid">☁️ Internet</span><span class="arrow">→</span>
+            <span class="step" id="t20-b">🏢 Office B</span>
+            <div class="dot" id="t20dot"></div>
+          </div>
+          <div class="sim-controls">
+            <button id="t20-plain" class="danger">🔓 VPN बिना पठाउनुहोस्</button>
+            <button id="t20-vpn" class="primary">🔒 VPN Tunnel मार्फत पठाउनुहोस्</button>
+            <button id="t20-reset">↺ Reset</button>
+          </div>
+          <div class="sim-log" id="t20log"></div>
+        </div>
+      </div>
+      <div class="page-nav"><a class="navgo" data-target="t19">← अघिल्लो</a><a class="navgo" data-target="t21">अर्को: Wireless Security →</a></div>
+    </div>
+
+    <!-- T21 -->
+    <div class="page" id="page-t21">
+      <div class="topic-head"><div class="badge">21</div><h2>Wireless Networking Security</h2><button class="mark-read" data-topic="21">○ पढिसकें</button></div>
+      <div class="topic-body">
+        <p>Wi-Fi को सुरक्षा standard समयसँगै सुधार हुँदै गएको छ — <code class="tag">Open</code> सबैभन्दा जोखिमपूर्ण, <code class="tag">WPA3</code> सबैभन्दा सुरक्षित।</p>
+        <div class="sim-box">
+          <div class="sim-title">SSID जोड्ने Simulator</div>
+          <div class="sim-controls">
+            <select class="sim-input" id="t21-sec">
+              <option value="open">Open (कुनै password छैन)</option>
+              <option value="wep">WEP</option>
+              <option value="wpa2" selected>WPA2</option>
+              <option value="wpa3">WPA3</option>
+            </select>
+            <button id="t21-go" class="primary">▶ जोड्नुहोस्</button>
+          </div>
+          <div class="sim-log" id="t21log"></div>
+        </div>
+      </div>
+      <div class="page-nav"><a class="navgo" data-target="t20">← अघिल्लो</a><a class="navgo" data-target="t22">अर्को: Spanning Tree →</a></div>
+    </div>
+
+    <!-- T22 -->
+    <div class="page" id="page-t22">
+      <div class="topic-head"><div class="badge">22</div><h2>Spanning Tree Protocol (STP)</h2><button class="mark-read" data-topic="22">○ पढिसकें</button></div>
+      <div class="topic-body">
+        <p>दुई switch बीच <em>redundant (backup) link</em> राख्दा loop बन्न सक्छ, जसले broadcast storm ल्याउँछ। <strong>STP</strong> ले एउटा link लाई automatically block गरेर loop रोक्छ।</p>
+        <div class="sim-box">
+          <div class="sim-title">Switch Loop Simulator</div>
+          <div class="flow track" id="t22track">
+            <span class="step" id="t22-sw1">🔀 Switch 1</span>
+            <span class="arrow" id="t22-link1">↔ Link 1 ↔</span>
+            <span class="step" id="t22-sw2">🔀 Switch 2</span>
+            <div class="dot" id="t22dot"></div>
+          </div>
+          <div class="flow" style="margin-top:6px;font-size:.75rem;color:var(--text-dim)" id="t22-link2label">↔ Link 2 (redundant) ↔ पनि जोडिएको छ</div>
+          <div class="sim-controls">
+            <button id="t22-noloop" class="danger">⚡ STP बिना जोड्नुहोस् (Loop हुन्छ)</button>
+            <button id="t22-stp" class="primary">🛡️ STP सक्रिय गर्नुहोस्</button>
+            <button id="t22-reset">↺ Reset</button>
+          </div>
+          <div class="sim-log" id="t22log"></div>
+        </div>
+      </div>
+      <div class="page-nav"><a class="navgo" data-target="t21">← अघिल्लो</a><a class="navgo" data-target="t23">अर्को: EtherChannel →</a></div>
+    </div>
+
+    <!-- T23 -->
+    <div class="page" id="page-t23">
+      <div class="topic-head"><div class="badge">23</div><h2>EtherChannel / Link Aggregation</h2><button class="mark-read" data-topic="23">○ पढिसकें</button></div>
+      <div class="topic-body">
+        <p><strong>EtherChannel</strong> ले धेरै physical link लाई एउटा logical link जस्तै bundle गर्छ — bandwidth जोडिन्छ, र एउटा link fail भए पनि connection टुट्दैन।</p>
+        <div class="sim-box">
+          <div class="sim-title">2-Link Bundle Simulator</div>
+          <div class="flow">
+            <span class="step" id="t23-l1">Link 1 (1 Gbps) ✅</span>
+            <span class="step" id="t23-l2">Link 2 (1 Gbps) ✅</span>
+          </div>
+          <div class="note-box" id="t23-bw">कुल Bandwidth: 2 Gbps</div>
+          <div class="sim-controls">
+            <button id="t23-fail" class="danger">⚡ Link 1 Fail गराउनुहोस्</button>
+            <button id="t23-reset">↺ Reset</button>
+          </div>
+          <div class="sim-log" id="t23log"></div>
+        </div>
+      </div>
+      <div class="page-nav"><a class="navgo" data-target="t22">← अघिल्लो</a><a class="navgo" data-target="t24">अर्को: HSRP/VRRP →</a></div>
+    </div>
+
+    <!-- T24 -->
+    <div class="page" id="page-t24">
+      <div class="topic-head"><div class="badge">24</div><h2>HSRP / VRRP (First Hop Redundancy)</h2><button class="mark-read" data-topic="24">○ पढिसकें</button></div>
+      <div class="topic-body">
+        <p>दुई router ले मिलेर एउटा <strong>Virtual IP</strong> share गर्छन् — Primary (Active) मर्यो भने Secondary (Standby) ले सेकेन्डभित्रै आफै काम सम्हाल्छ, PC ले केही थाहै पाउँदैन।</p>
+        <div class="sim-box">
+          <div class="sim-title">Router Failover Simulator</div>
+          <div class="flow track" id="t24track">
+            <span class="step" id="t24-pc">💻 PC (Gateway: 192.168.1.1)</span>
+            <span class="step" id="t24-r1">📡 R1 (Active)</span>
+            <span class="step" id="t24-r2">📡 R2 (Standby)</span>
+            <div class="dot" id="t24dot"></div>
+          </div>
+          <div class="sim-controls">
+            <button id="t24-fail" class="danger">⚡ R1 Fail गराउनुहोस्</button>
+            <button id="t24-send" class="primary">▶ PC बाट Packet पठाउनुहोस्</button>
+            <button id="t24-reset">↺ Reset</button>
+          </div>
+          <div class="sim-log" id="t24log"></div>
+        </div>
+      </div>
+      <div class="page-nav"><a class="navgo" data-target="t23">← अघिल्लो</a><a class="navgo" data-target="t25">अर्को: Load Balancing →</a></div>
+    </div>
+
+    <!-- T25 -->
+    <div class="page" id="page-t25">
+      <div class="topic-head"><div class="badge">25</div><h2>Load Balancing</h2><button class="mark-read" data-topic="25">○ पढिसकें</button></div>
+      <div class="topic-body">
+        <p><strong>Load Balancer</strong> ले आउने request हरूलाई धेरै server बीच बाँड्छ, ताकि एउटा server मात्र थाकेर नबसोस्।</p>
+        <div class="sim-box">
+          <div class="sim-title">Round-Robin Load Balancer Simulator</div>
+          <div class="flow">
+            <span class="step" id="t25-s1">🖥️ Server 1 — <span id="t25-c1">0</span> request</span>
+            <span class="step" id="t25-s2">🖥️ Server 2 — <span id="t25-c2">0</span> request</span>
+            <span class="step" id="t25-s3">🖥️ Server 3 — <span id="t25-c3">0</span> request</span>
+          </div>
+          <div class="sim-controls">
+            <button id="t25-send" class="primary">▶ Request पठाउनुहोस्</button>
+            <button id="t25-reset">↺ Reset</button>
+          </div>
+          <div class="sim-log" id="t25log"></div>
+        </div>
+      </div>
+      <div class="page-nav"><a class="navgo" data-target="t24">← अघिल्लो</a><a class="navgo" data-target="t26">अर्को: Cloud Networking →</a></div>
+    </div>
+
+    <!-- T26 -->
+    <div class="page" id="page-t26">
+      <div class="topic-head"><div class="badge">26</div><h2>Cloud Networking (VPC) — छोटो चिनारी</h2><button class="mark-read" data-topic="26">○ पढिसकें</button></div>
+      <div class="topic-body">
+        <p>Cloud (AWS/Azure) मा <strong>VPC</strong> भित्र <em>Public Subnet</em> (Internet Gateway सँग जोडिएको) र <em>Private Subnet</em> (सीधै internet पहुँच नभएको) छुट्याइन्छ — database जस्ता sensitive resource Private मा राखिन्छ।</p>
+        <div class="sim-box">
+          <div class="sim-title">VPC Traffic Simulator</div>
+          <div class="flow track" id="t26track">
+            <span class="step" id="t26-priv">🗄️ Database (Private Subnet)</span>
+            <span class="step" id="t26-nat">🔁 NAT Gateway</span>
+            <span class="step" id="t26-igw">🚪 Internet Gateway</span>
+            <span class="step" id="t26-web">🖥️ Web Server (Public Subnet)</span>
+            <div class="dot" id="t26dot"></div>
+          </div>
+          <div class="sim-controls">
+            <button id="t26-priv2net" class="primary">▶ Database बाट Internet Update Download</button>
+            <button id="t26-net2priv">▶ Internet बाट सीधै Database Access प्रयास</button>
+            <button id="t26-reset">↺ Reset</button>
+          </div>
+          <div class="sim-log" id="t26log"></div>
+        </div>
+      </div>
+      <div class="page-nav"><a class="navgo" data-target="t25">← अघिल्लो</a><a class="navgo" data-target="t27">अर्को: Security Threats →</a></div>
+    </div>
+
+    <!-- T27 -->
+    <div class="page" id="page-t27">
+      <div class="topic-head"><div class="badge">27</div><h2>सामान्य Network Security Threats</h2><button class="mark-read" data-topic="27">○ पढिसकें</button></div>
+      <div class="topic-body">
+        <p>Network security जागिरको लागि यी आक्रमण (attack) हरू चिन्नु महत्त्वपूर्ण छ — कसरी हुन्छन् र कसरी जोगिने।</p>
+        <div class="sim-box">
+          <div class="sim-title">Threat Simulator</div>
+          <div class="sim-controls">
+            <button class="t27-btn primary" data-t="phishing">🎣 Phishing</button>
+            <button class="t27-btn" data-t="mitm">🕵️ Man-in-the-Middle</button>
+            <button class="t27-btn" data-t="ddos">💥 DDoS</button>
+          </div>
+          <div class="sim-log" id="t27log"></div>
+        </div>
+      </div>
+      <div class="page-nav"><a class="navgo" data-target="t26">← अघिल्लो</a><a class="navgo" data-target="t28">अर्को: IPv6 →</a></div>
+    </div>
+
+    <!-- T28 -->
+    <div class="page" id="page-t28">
+      <div class="topic-head"><div class="badge">28</div><h2>IPv6 — किन चाहियो?</h2><button class="mark-read" data-topic="28">○ पढिसकें</button></div>
+      <div class="topic-body">
+        <p>IPv4 मा जम्मा ~४.३ अरब address मात्र छन्, जुन विश्वका सबै device को लागि पुग्दैन। <strong>IPv6</strong> ले अकल्पनीय ठूलो address space दिन्छ।</p>
+        <div class="sim-box">
+          <div class="sim-title">IPv4 vs IPv6 Simulator</div>
+          <div class="subnet-summary">
+            <div class="metric"><div class="num">4.3B</div><div class="lab">IPv4 total address</div></div>
+            <div class="metric"><div class="num">340 undecillion</div><div class="lab">IPv6 total address</div></div>
+          </div>
+          <div class="sim-controls">
+            <button id="t28-go" class="primary">▶ IPv6 Address Generate गर्नुहोस्</button>
+          </div>
+          <div class="sim-log" id="t28log"></div>
+        </div>
+      </div>
+      <div class="page-nav"><a class="navgo" data-target="t27">← अघिल्लो</a><a class="navgo" data-target="t29">अर्को: QoS →</a></div>
+    </div>
+
+    <!-- T29 -->
+    <div class="page" id="page-t29">
+      <div class="topic-head"><div class="badge">29</div><h2>QoS (Quality of Service)</h2><button class="mark-read" data-topic="29">○ पढिसकें</button></div>
+      <div class="topic-body">
+        <p><strong>QoS</strong> ले कुन traffic लाई पहिले पठाउने भनी प्राथमिकता दिन्छ — जस्तै video call लाई file download भन्दा पहिले।</p>
+        <div class="sim-box">
+          <div class="sim-title">Mixed Traffic Simulator</div>
+          <div class="flow">
+            <span class="step">📹 Video Call</span><span class="step">📁 File Download</span><span class="step">📧 Email</span>
+          </div>
+          <div class="sim-controls">
+            <button id="t29-no" class="danger">▶ QoS बिना पठाउनुहोस्</button>
+            <button id="t29-yes" class="primary">▶ QoS सक्रिय गरेर पठाउनुहोस्</button>
+            <button id="t29-reset">↺ Reset</button>
+          </div>
+          <div class="sim-log" id="t29log"></div>
+        </div>
+      </div>
+      <div class="page-nav"><a class="navgo" data-target="t28">← अघिल्लो</a><a class="navgo" data-target="t30">अर्को: Troubleshooting →</a></div>
+    </div>
+
+    <!-- T30 -->
+    <div class="page" id="page-t30">
+      <div class="topic-head"><div class="badge">30</div><h2>Network Troubleshooting Methodology</h2><button class="mark-read" data-topic="30">○ पढिसकें</button></div>
+      <div class="topic-body">
+        <p>जागिरमा सबैभन्दा प्रयोग हुने skill: systematic troubleshooting — तल्लो layer देखि माथि जाँदै समस्या पत्ता लगाउने।</p>
+        <div class="sim-box">
+          <div class="sim-title">"Website खुल्दैन" — Step-by-step Simulator</div>
+          <div class="sim-controls">
+            <button id="t30-step" class="primary">▶ अर्को step जाँच्नुहोस्</button>
+            <button id="t30-reset">↺ Reset</button>
+          </div>
+          <div class="sim-log" id="t30log"></div>
+        </div>
+      </div>
+      <div class="page-nav"><a class="navgo" data-target="t29">← अघिल्लो</a><a class="navgo" data-target="quiz">अर्को: Quiz दिनुहोस् →</a></div>
     </div>
 
     <!-- QUIZ -->
@@ -421,7 +860,7 @@
         <div class="label">तिम्रो score</div>
         <div class="remark" id="scoreRemark"></div>
       </div>
-      <div class="page-nav"><a class="navgo" data-target="t12">← अघिल्लो</a><a class="navgo" data-target="home">🏠 Home मा फर्कनुहोस्</a></div>
+      <div class="page-nav"><a class="navgo" data-target="t30">← अघिल्लो</a><a class="navgo" data-target="home">🏠 Home मा फर्कनुहोस्</a></div>
     </div>
 
   </main>
