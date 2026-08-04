@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>नेटवर्क डिजाइन कोर्स / ネットワーク設計コース</title>
+<style>
+  :root {
+    --blue: #1d4ed8;
+    --blue-dark: #1e3a8a;
+    --blue-light: #eff6ff;
+    --orange: #ea580c;
+    --green: #059669;
+    --bg: #f8fafc;
+    --text: #1c1917;
+    --card: #ffffff;
+    --border: #e2e8f0;
+    --sidebar-w: 280px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "Noto Sans Devanagari", "Noto Sans JP", "Mangal", "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    line-height: 1.8;
+    font-size: 16.5px;
+  }
+
+  /* ===== Layout ===== */
+  .app { display: flex; min-height: 100vh; }
+
+  .sidebar {
+    width: var(--sidebar-w);
+    flex-shrink: 0;
+    background: linear-gradient(180deg, #0f172a, #1e293b);
+    color: #e2e8f0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 22px 16px 40px;
+  }
+  .sidebar::-webkit-scrollbar { width: 6px; }
+  .sidebar::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+
+  .brand {
+    font-size: 1.15rem;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+  .brand small { display: block; font-weight: normal; font-size: 0.8rem; color: #94a3b8; }
+
+  .lang-switch {
+    display: flex;
+    background: rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 4px;
+    gap: 4px;
+    margin: 16px 0 22px;
+  }
+  .lang-switch button {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: #cbd5e1;
+    padding: 8px 6px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.2s;
+  }
+  .lang-switch button.active { background: var(--blue); color: white; font-weight: bold; }
+
+  .nav-group { margin-bottom: 18px; }
+  .nav-group-title {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #64748b;
+    padding: 0 10px;
+    margin-bottom: 6px;
+    font-weight: bold;
+  }
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: 8px;
+    color: #cbd5e1;
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-bottom: 2px;
+    transition: background 0.15s, color 0.15s;
+  }
+  .nav-link:hover { background: rgba(255,255,255,0.08); color: #fff; }
+  .nav-link.active { background: var(--blue); color: white; font-weight: bold; }
+  .nav-badge {
+    width: 22px; height: 22px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.72rem;
+    flex-shrink: 0;
+  }
+  .nav-link.active .nav-badge { background: rgba(255,255,255,0.25); }
+
+  .content {
+    flex: 1;
+    min-width: 0;
+    padding: 40px 5vw 100px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  header.hero {
+    background: linear-gradient(135deg, #1d4ed8, #2563eb);
+    color: white;
+    padding: 36px 32px;
+    border-radius: 18px;
+    margin-bottom: 30px;
+  }
+  header.hero h1 { margin: 0 0 8px; font-size: 1.7rem; }
+  header.hero p { margin: 0; opacity: 0.92; font-size: 1rem; }
+  .hero-tags { margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .hero-tags span {
+    background: rgba(255,255,255,0.18);
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+  }
+
+  .lesson-section { margin-bottom: 50px; scroll-margin-top: 20px; }
+  .lesson-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .lesson-header .badge {
+    background: var(--blue-dark);
+    color: white;
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .lesson-header h2 { margin: 0; font-size: 1.35rem; color: #0f172a; }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 26px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    scroll-margin-top: 20px;
+  }
+
+  h3 {
+    color: #0f172a;
+    background: var(--blue-light);
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 1.02rem;
+    border-left: 5px solid var(--blue);
+    margin: 0 0 14px;
+  }
+
+  .analogy {
+    background: #fff7ed;
+    border-left: 5px solid var(--orange);
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin: 12px 0;
+  }
+  .analogy b { color: var(--orange); }
+
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 0.93rem; }
+  th, td { border: 1px solid var(--border); padding: 9px 11px; text-align: left; }
+  th { background: var(--blue); color: white; }
+  tr:nth-child(even) { background: #f8fafc; }
+
+  pre {
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 15px 18px;
+    border-radius: 10px;
+    overflow-x: auto;
+    font-family: "Consolas", monospace;
+    font-size: 0.87rem;
+    direction: ltr;
+    text-align: left;
+    margin: 12px 0;
+  }
+  code {
+    background: #eef2f7;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: "Consolas", monospace;
+    direction: ltr;
+    display: inline-block;
+  }
+
+  .note {
+    background: #ecfdf5;
+    border-left: 5px solid var(--green);
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 0.92rem;
+    margin: 10px 0;
+  }
+  .warn {
+    background: #fff1f2;
+    border-left: 5px solid #e11d48;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 0.92rem;
+    margin: 10px 0;
+  }
+
+  .story {
+    background: #1e293b;
+    color: #f1f5f9;
+    padding: 22px 26px;
+    border-radius: 14px;
+    font-size: 1rem;
+    text-align: center;
+    line-height: 2;
+  }
+
+  .checklist { list-style: none; padding: 0; margin: 10px 0; }
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--border);
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist input[type=checkbox] { margin-top: 4px; width: 17px; height: 17px; accent-color: var(--blue); flex-shrink: 0; }
+
+  .finish {
+    background: linear-gradient(135deg, #059669, #10b981);
+    color: white;
+    padding: 32px;
+    border-radius: 16px;
+    text-align: center;
+    margin-top: 20px;
+  }
+  .finish h2 { margin-top: 0; }
+
+  ol, ul { padding-left: 22px; }
+  li { margin-bottom: 6px; }
+
+  /* language toggle logic */
+  .ja { display: none; }
+  body.lang-ja .ne { display: none; }
+  body.lang-ja .ja { display: block; }
+  body.lang-ja .ja.inline { display: inline; }
+
+  /* mobile */
+  .menu-toggle { display: none; }
+  @media (max-width: 860px) {
+    .app { flex-direction: column; }
+    .sidebar {
+      width: 100%;
+      height: auto;
+      position: relative;
+      padding: 14px 16px;
+    }
+    .content { padding: 24px 5vw 80px; max-width: 100%; }
+    .nav-links-wrap { display: none; }
+    .nav-links-wrap.open { display: block; }
+    .menu-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255,255,255,0.08);
+      color: white;
+      border: none;
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin-bottom: 4px;
+    }
+    header.hero { padding: 26px 20px; }
+    header.hero h1 { font-size: 1.35rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="ne">🎓 नेटवर्क डिजाइन कोर्स</span>
+      <span class="ja">🎓 ネットワーク設計コース</span>
+      <small><span class="ne">सुरुदेखि Packet Tracer सम्म</span><span class="ja">基礎から Packet Tracer 実習まで</span></small>
+    </div>
+
+    <div class="lang-switch">
+      <button id="btn-ne" class="active" onclick="setLang('ne')">नेपाली</button>
+      <button id="btn-ja" onclick="setLang('ja')">日本語</button>
+    </div>
+
+    <button class="menu-toggle" onclick="document.querySelector('.nav-links-wrap').classList.toggle('open')">
+      <span><span class="ne">📑 पाठसूची</span><span class="ja">📑 目次</span></span>
+      <span>▾</span>
+    </button>
+
+    <div class="nav-links-wrap">
+      <div class="nav-group">
+        <div class="nav-group-title"><span class="ne">भाग १ — आधारभूत ज्ञान</span><span class="ja">パート１ — 基礎知識</span></div>
+        <a class="nav-link" data-target="l1-0"><span class="nav-badge">🏫</span><span class="ne">नेटवर्क भनेको के हो</span><span class="ja">ネットワークとは</span></a>
+        <a class="nav-link" data-target="l1-1"><span class="nav-badge">🏠</span><span class="ne">IP Address</span><span class="ja">IPアドレス</span></a>
+        <a class="nav-link" data-target="l1-2"><span class="nav-badge">🏘️</span><span class="ne">Subnet Mask</span><span class="ja">サブネットマスク</span></a>
+        <a class="nav-link" data-target="l1-3"><span class="nav-badge">📮</span><span class="ne">Switch</span><span class="ja">Switch</span></a>
+        <a class="nav-link" data-target="l1-4"><span class="nav-badge">🚚</span><span class="ne">Router</span><span class="ja">Router</span></a>
+        <a class="nav-link" data-target="l1-5"><span class="nav-badge">🚪</span><span class="ne">Default Gateway</span><span class="ja">デフォルトゲートウェイ</span></a>
+        <a class="nav-link" data-target="l1-6"><span class="nav-badge">🗺️</span><span class="ne">Static Route</span><span class="ja">スタティックルート</span></a>
+        <a class="nav-link" data-target="l1-7"><span class="nav-badge">📞</span><span class="ne">Ping Test</span><span class="ja">Pingテスト</span></a>
+        <a class="nav-link" data-target="l1-8"><span class="nav-badge">🎬</span><span class="ne">पूरा कहानी</span><span class="ja">全体ストーリー</span></a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-title"><span class="ne">भाग २ — व्यावहारिक अभ्यास</span><span class="ja">パート２ — 実習</span></div>
+        <a class="nav-link" data-target="l2-0"><span class="nav-badge">0</span><span class="ne">IP Design</span><span class="ja">IP設計</span></a>
+        <a class="nav-link" data-target="l2-1"><span class="nav-badge">1</span><span class="ne">Cabling</span><span class="ja">配線</span></a>
+        <a class="nav-link" data-target="l2-2"><span class="nav-badge">2</span><span class="ne">Router1 Config</span><span class="ja">Router1設定</span></a>
+        <a class="nav-link" data-target="l2-3"><span class="nav-badge">3</span><span class="ne">Router2 Config</span><span class="ja">Router2設定</span></a>
+        <a class="nav-link" data-target="l2-4"><span class="nav-badge">4</span><span class="ne">Router-Router Link</span><span class="ja">Router間リンク</span></a>
+        <a class="nav-link" data-target="l2-5"><span class="nav-badge">5</span><span class="ne">Static Route</span><span class="ja">スタティックルート設定</span></a>
+        <a class="nav-link" data-target="l2-6"><span class="nav-badge">6</span><span class="ne">Ping Test</span><span class="ja">Pingテスト</span></a>
+        <a class="nav-link" data-target="l2-7"><span class="nav-badge">7</span><span class="ne">Save</span><span class="ja">保存</span></a>
+        <a class="nav-link" data-target="l2-8"><span class="nav-badge">🎁</span><span class="ne">Web Server</span><span class="ja">Webサーバー</span></a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-title"><span class="ne">अन्तिम</span><span class="ja">最後に</span></div>
+        <a class="nav-link" data-target="l3-checklist"><span class="nav-badge">✅</span><span class="ne">Checklist</span><span class="ja">チェックリスト</span></a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN CONTENT ================= -->
+  <main class="content">
+
+    <header class="hero">
+      <h1><span class="ne">🌐 नेटवर्क कसरी बनाउने?</span><span class="ja">🌐 ネットワークの作り方</span></h1>
+      <p><span class="ne">१२ वर्षको बच्चाले पनि बुझ्ने भाषामा — सिद्धान्तदेखि Packet Tracer अभ्यास सम्म</span><span class="ja">12歳でもわかる説明で — 理論から Packet Tracer 実習まで</span></p>
+      <div class="hero-tags">
+        <span class="ne">🎯 IP Address</span><span class="ja hero-jatag" style="display:none">🎯 IPアドレス</span>
+        <span class="ne">🎯 Router</span>
+        <span class="ne">🎯 Static Route</span>
+        <span class="ne">🎯 Packet Tracer</span>
+      </div>
+    </header>
+
+    <!-- ========== PART 1 ========== -->
+    <div class="lesson-header">
+      <div class="badge">1</div>
+      <h2><span class="ne">भाग १ — आधारभूत ज्ञान (सजिलो भाषामा)</span><span class="ja">パート１ — 基礎知識（やさしく解説）</span></h2>
+    </div>
+
+    <div class="card" id="l1-0">
+      <h3><span class="ne">🏫 नेटवर्क भनेको के हो?</span><span class="ja">🏫 ネットワークって何？</span></h3>
+      <div class="analogy ne"><b>सोच्नुहोस्:</b> तपाईंको स्कुलमा धेरै कक्षाकोठा छन्, र सबै कक्षाकोठा बिच चिठी (म्यासेज) पठाउन मिल्छ। त्यो चिठी पठाउने प्रणाली नै <b>नेटवर्क</b> हो।</div>
+      <div class="analogy ja"><b>想像してみて：</b>学校にはたくさんの教室があって、教室同士で手紙（メッセージ）を送り合えるよね。その手紙を送るしくみが<b>ネットワーク</b>なんだ。</div>
+      <p class="ne">कम्प्युटरहरू पनि एक-अर्कालाई म्यासेज पठाउँछन् — तर चिठीको सट्टामा "डेटा" पठाउँछन्। त्यो पठाउने बाटो बनाउन नै हामी Switch र Router प्रयोग गर्छौं।</p>
+      <p class="ja">コンピューターも同じようにメッセージを送り合う ── ただし手紙の代わりに「データ」を送る。その通り道を作るために Switch と Router を使うんだよ。</p>
+    </div>
+
+    <div class="card" id="l1-1">
+      <h3><span class="ne">🏠 IP Address = घरको ठेगाना</span><span class="ja">🏠 IPアドレス＝家の住所</span></h3>
+      <p class="ne">हरेक कम्प्युटरको आफ्नै <b>ठेगाना</b> हुनुपर्छ — नत्र चिठी कहाँ पठाउने थाहा हुँदैन।</p>
+      <p class="ja">どのコンピューターにも自分だけの<b>住所</b>が必要 ── そうしないと、どこに手紙を送ればいいか分からない。</p>
+      <div class="analogy ne">घरको ठेगाना: "वडा नं. ५, घर नं. १२"। कम्प्युटरको ठेगाना जस्तो: <code>192.168.1.1</code> — ४ वटा नम्बर (० देखि २५५), डट (.) ले छुट्याइएको।</div>
+      <div class="analogy ja">家の住所：「〇〇町5丁目12番地」のような感じ。コンピューターの住所：<code>192.168.1.1</code> — 4つの数字（0〜255）をドット（.）で区切ったもの。</div>
+    </div>
+
+    <div class="card" id="l1-2">
+      <h3><span class="ne">🏘️ Subnet Mask = "तिम्रो टोल कुन हो?"</span><span class="ja">🏘️ サブネットマスク＝「あなたの町内はどこ？」</span></h3>
+      <p class="ne">Subnet Mask (<code>255.255.255.0</code>) ले भन्छ — "यी ठेगानाहरू सबै एउटै टोलमा पर्छन्"।</p>
+      <p class="ja">サブネットマスク（<code>255.255.255.0</code>）は「これらの住所は同じ町内にある」ことを示す。</p>
+      <div class="analogy ne"><code>192.168.1.1</code>, <code>192.168.1.2</code> — एउटै टोल, सजिलै चिठी पठाउन सकिन्छ। तर <code>192.168.10.5</code> अर्को टोल हो — पोस्टम्यान (Router) चाहिन्छ।</div>
+      <div class="analogy ja"><code>192.168.1.1</code>、<code>192.168.1.2</code> ── 同じ町内、簡単に手紙を送れる。でも <code>192.168.10.5</code> は別の町内 ── 郵便屋さん（Router）が必要。</div>
+    </div>
+
+    <div class="card" id="l1-3">
+      <h3><span class="ne">📮 Switch = टोल भित्रको चिठी बाँड्ने मान्छे</span><span class="ja">📮 Switch＝町内で手紙を配る人</span></h3>
+      <p class="ne"><b>Switch</b> ले एउटा टोल भित्रका कम्प्युटरहरूलाई जोड्छ — तर टोलभन्दा बाहिर जान सक्दैन।</p>
+      <p class="ja"><b>Switch</b>は一つの町内の中のコンピューターをつなぐ ── ただし町内の外には出られない。</p>
+      <div class="analogy ne">डायग्राममा: <b>Switch0</b> ले PC0, PC1 लाई जोड्छ। <b>Switch1</b> ले PC2, PC3 लाई जोड्छ।</div>
+      <div class="analogy ja">図では：<b>Switch0</b> が PC0, PC1 を、<b>Switch1</b> が PC2, PC3 をつなぐ。</div>
+    </div>
+
+    <div class="card" id="l1-4">
+      <h3><span class="ne">🚚 Router = दुई टोल बिच चिठी पुर्‍याउने पोस्टम्यान</span><span class="ja">🚚 Router＝2つの町内をつなぐ郵便屋さん</span></h3>
+      <p class="ne"><b>Router</b> ले दुई फरक टोल बिच चिठी ल्याउने-लैजाने काम गर्छ।</p>
+      <p class="ja"><b>Router</b>は2つの違う町内の間で手紙を運ぶ。</p>
+      <div class="analogy ne">
+        <b>Router1</b> = टोल 192.168.1 को पोस्टम्यान। <b>Router2</b> = टोल 192.168.10 को पोस्टम्यान।<br>
+        दुवै पोस्टम्यान आफैं एउटा तारले जोडिएका हुन्छन् (192.168.5 टोल)।
+      </div>
+      <div class="analogy ja">
+        <b>Router1</b> ＝ 192.168.1 町内の郵便屋さん。<b>Router2</b> ＝ 192.168.10 町内の郵便屋さん。<br>
+        2人もケーブルでつながっている（192.168.5 町内）。
+      </div>
+    </div>
+
+    <div class="card" id="l1-5">
+      <h3><span class="ne">🚪 Default Gateway = "बाहिर पठाउन कसलाई दिने?"</span><span class="ja">🚪 デフォルトゲートウェイ＝「町外へは誰に渡す？」</span></h3>
+      <p class="ne">PC0 ले टोल बाहिर चिठी पठाउन खोज्दा, बाटो थाहा नभएकोले <b>Default Gateway</b> (आफ्नै Router) लाई बुझाइदिन्छ।</p>
+      <p class="ja">PC0 が町外に手紙を送るとき、道を知らないので<b>デフォルトゲートウェイ</b>（自分の Router）に渡す。</p>
+      <div class="analogy ne">PC0 को Gateway = 192.168.1.254 (Router1) — "मेरो टोलबाट बाहिर जाने चिठी Router1 लाई देऊ।"</div>
+      <div class="analogy ja">PC0 のゲートウェイ＝192.168.1.254（Router1）── 「町外への手紙は Router1 に渡してね」</div>
+    </div>
+
+    <div class="card" id="l1-6">
+      <h3><span class="ne">🗺️ Static Route = पोस्टम्यानको नक्सा</span><span class="ja">🗺️ スタティックルート＝郵便屋さんの地図</span></h3>
+      <p class="ne">Router1 लाई थाहा छैन "192.168.10 टोल कहाँ छ"। हामीले नक्सा दिनुपर्छ:</p>
+      <p class="ja">Router1 は「192.168.10 町内がどこか」知らない。地図を渡す必要がある：</p>
+      <div class="analogy ne">"ए Router1, 192.168.10 टोल जानुपर्‍यो भने, Router2 लाई बुझाइदेऊ (192.168.5.254 मा)"</div>
+      <div class="analogy ja">「Router1、192.168.10 町内に行くなら Router2（192.168.5.254）に渡してね」</div>
+    </div>
+
+    <div class="card" id="l1-7">
+      <h3><span class="ne">📞 Ping = "तिमी सुन्छौ?" भन्ने टेस्ट</span><span class="ja">📞 Ping＝「聞こえる？」というテスト</span></h3>
+      <p class="ne"><b>Ping</b> ले एउटा कम्प्युटरबाट अर्कोलाई सानो म्यासेज पठाउँछ र रिप्लाई पर्खन्छ।</p>
+      <p class="ja"><b>Ping</b>はコンピューター同士で小さなメッセージを送り合うテスト。</p>
+      <div class="note ne">५/५ Success = बाटो पूरा मिल्यो। पहिलो पटक fail हुनु सामान्य हो (ARP resolve हुन समय लाग्छ)।</div>
+      <div class="note ja">5/5 成功＝道が完全につながった。最初は失敗することがある（ARP解決に時間がかかるため）。</div>
+    </div>
+
+    <div class="card story" id="l1-8">
+      <span class="ne">
+        <b>🎬 पूरा कहानी — एक लाइनमा</b><br><br>
+        PC0 ले PC2 लाई चिठी पठाउन खोज्छ → Router1 (पोस्टम्यान) लाई दिन्छ →<br>
+        Router1 ले नक्सा हेरेर Router2 लाई पठाउँछ → Router2 ले Switch1 मार्फत PC2 सम्म पुर्‍याउँछ।
+      </span>
+      <span class="ja">
+        <b>🎬 全体のストーリー</b><br><br>
+        PC0 が PC2 に手紙を送る → Router1 に渡す →<br>
+        Router1 は地図を見て Router2 に送る → Router2 が Switch1 経由で PC2 に届ける。
+      </span>
+    </div>
+
+    <!-- ========== PART 2 ========== -->
+    <div class="lesson-header">
+      <div class="badge">2</div>
+      <h2><span class="ne">भाग २ — Packet Tracer व्यावहारिक अभ्यास</span><span class="ja">パート２ — Packet Tracer 実習</span></h2>
+    </div>
+    <p class="ne">टोपोलजी: <b>PC0, PC1 — Switch0 — Router1 — Router2 — Switch1 — PC2, PC3</b></p>
+    <p class="ja">トポロジー: <b>PC0, PC1 — Switch0 — Router1 — Router2 — Switch1 — PC2, PC3</b></p>
+
+    <div class="card" id="l2-0">
+      <h3><span class="ne">0️⃣ IP Addressing योजना</span><span class="ja">0️⃣ IPアドレス設計</span></h3>
+      <table>
+        <tr><th><span class="ne">डिभाइस</span><span class="ja">機器</span></th><th><span class="ne">इन्टरफेस</span><span class="ja">インターフェース</span></th><th>IP Address</th><th>Subnet Mask</th></tr>
+        <tr><td>PC0</td><td>NIC</td><td>192.168.1.1</td><td>255.255.255.0</td></tr>
+        <tr><td>PC1</td><td>NIC</td><td>192.168.1.2</td><td>255.255.255.0</td></tr>
+        <tr><td>Router1</td><td>Gi0/0</td><td><b>192.168.1.254</b></td><td>255.255.255.0</td></tr>
+        <tr><td>Router1</td><td>Gi0/1</td><td><b>192.168.5.253</b></td><td>255.255.255.0</td></tr>
+        <tr><td>Router2</td><td>Gi0/1</td><td><b>192.168.5.254</b></td><td>255.255.255.0</td></tr>
+        <tr><td>Router2</td><td>Gi0/0</td><td><b>192.168.10.253</b></td><td>255.255.255.0</td></tr>
+        <tr><td>PC2</td><td>NIC</td><td>192.168.10.1</td><td>255.255.255.0</td></tr>
+        <tr><td>PC3</td><td>NIC</td><td>192.168.10.2</td><td>255.255.255.0</td></tr>
+      </table>
+      <div class="note ne">Router ले सधैं <code>*.*.*.254</code> र <code>*.*.*.253</code> प्रयोग गर्छ। Router-Router link <code>192.168.5.0/24</code> मा हुन्छ।</div>
+      <div class="note ja">Router は常に <code>*.*.*.254</code> と <code>*.*.*.253</code> を使う。Router 間リンクは <code>192.168.5.0/24</code>。</div>
+    </div>
+
+    <div class="card" id="l2-1">
+      <h3><span class="ne">1️⃣ Cabling (फिजिकल जडान)</span><span class="ja">1️⃣ ケーブル配線</span></h3>
+      <ol class="ne">
+        <li><b>PC0 ↔ Switch0</b> — Straight cable</li>
+        <li><b>PC1 ↔ Switch0</b> — Straight cable</li>
+        <li><b>Switch0 ↔ Router1</b> — Straight cable (GigabitEthernet0/0)</li>
+        <li><b>Router1 ↔ Router2</b> — Straight cable (दुवैको GigabitEthernet0/1)</li>
+        <li><b>Switch1 ↔ Router2</b> — Straight cable (GigabitEthernet0/0)</li>
+        <li><b>PC2/PC3 ↔ Switch1</b> — Straight cable</li>
+      </ol>
+      <ol class="ja">
+        <li><b>PC0 ↔ Switch0</b> — ストレートケーブル</li>
+        <li><b>PC1 ↔ Switch0</b> — ストレートケーブル</li>
+        <li><b>Switch0 ↔ Router1</b> — ストレートケーブル（GigabitEthernet0/0）</li>
+        <li><b>Router1 ↔ Router2</b> — ストレートケーブル（両方 GigabitEthernet0/1）</li>
+        <li><b>Switch1 ↔ Router2</b> — ストレートケーブル（GigabitEthernet0/0）</li>
+        <li><b>PC2/PC3 ↔ Switch1</b> — ストレートケーブル</li>
+      </ol>
+    </div>
+
+    <div class="card" id="l2-2">
+      <h3><span class="ne">2️⃣ Router1 Configure गर्ने (192.168.1/24 side)</span><span class="ja">2️⃣ Router1 の設定（192.168.1/24側）</span></h3>
+      <pre>Router&gt; enable
+Router# configure terminal
+Router(config)# interface GigabitEthernet0/0
+Router(config-if)# ip address 192.168.1.254 255.255.255.0
+Router(config-if)# no shutdown
+Router(config-if)# exit</pre>
+      <p class="ne"><b>PC0, PC1:</b> IP सेट गर्ने → Gateway: <code>192.168.1.254</code></p>
+      <p class="ja"><b>PC0, PC1:</b> IPを設定 → ゲートウェイ: <code>192.168.1.254</code></p>
+      <div class="note ne">Save: <code>Router1# write memory</code></div>
+      <div class="note ja">保存: <code>Router1# write memory</code></div>
+    </div>
+
+    <div class="card" id="l2-3">
+      <h3><span class="ne">3️⃣ Router2 Configure गर्ने (192.168.10/24 side)</span><span class="ja">3️⃣ Router2 の設定（192.168.10/24側）</span></h3>
+      <pre>Router2(config)# interface GigabitEthernet0/0
+Router2(config-if)# ip address 192.168.10.253 255.255.255.0
+Router2(config-if)# no shutdown
+Router2(config-if)# exit</pre>
+      <p class="ne"><b>PC2, PC3:</b> IP सेट गर्ने → Gateway: <code>192.168.10.253</code></p>
+      <p class="ja"><b>PC2, PC3:</b> IPを設定 → ゲートウェイ: <code>192.168.10.253</code></p>
+    </div>
+
+    <div class="card" id="l2-4">
+      <h3><span class="ne">4️⃣ Router1 ↔ Router2 Link (192.168.5/24)</span><span class="ja">4️⃣ Router1 ↔ Router2 リンク</span></h3>
+      <pre>Router1(config)# interface GigabitEthernet0/1
+Router1(config-if)# ip address 192.168.5.253 255.255.255.0
+Router1(config-if)# no shutdown
+Router1(config-if)# exit</pre>
+      <pre>Router2(config)# interface GigabitEthernet0/1
+Router2(config-if)# ip address 192.168.5.254 255.255.255.0
+Router2(config-if)# no shutdown
+Router2(config-if)# exit</pre>
+      <div class="note ne">Test: <code>Router2# ping 192.168.5.253</code> (पहिलो ping fail हुनु सामान्य)</div>
+      <div class="note ja">確認: <code>Router2# ping 192.168.5.253</code>（最初は失敗することがある）</div>
+    </div>
+
+    <div class="card" id="l2-5">
+      <h3><span class="ne">5️⃣ Static Route सेट गर्ने</span><span class="ja">5️⃣ スタティックルートの設定</span></h3>
+      <pre>Router1(config)# ip route 192.168.10.0 255.255.255.0 192.168.5.254</pre>
+      <pre>Router2(config)# ip route 192.168.1.0 255.255.255.0 192.168.5.253</pre>
+      <div class="note ne">"यो destination network मा पुग्न यहाँ (next hop) बाट जाऊ" भनेर Router लाई म्यानुअल बाटो देखाइदिने हो।</div>
+      <div class="note ja">「この宛先ネットワークに行くにはここ（next hop）を経由して」と Router に手動で道を教える。</div>
+    </div>
+
+    <div class="card" id="l2-6">
+      <h3><span class="ne">6️⃣ Full Ping Test (End-to-End)</span><span class="ja">6️⃣ フル Ping テスト</span></h3>
+      <ul class="ne">
+        <li>PC0/PC1 → PC2 (<code>192.168.10.1</code>)</li>
+        <li>PC0/PC1 → PC3 (<code>192.168.10.2</code>)</li>
+        <li>PC2/PC3 → PC0 (<code>192.168.1.1</code>)</li>
+        <li>PC2/PC3 → PC1 (<code>192.168.1.2</code>)</li>
+      </ul>
+      <ul class="ja">
+        <li>PC0/PC1 → PC2（<code>192.168.10.1</code>）</li>
+        <li>PC0/PC1 → PC3（<code>192.168.10.2</code>）</li>
+        <li>PC2/PC3 → PC0（<code>192.168.1.1</code>）</li>
+        <li>PC2/PC3 → PC1（<code>192.168.1.2</code>）</li>
+      </ul>
+      <div class="warn ne">फेल भए: interface <code>no shutdown</code>, static route को Network/Mask/Next Hop, PC को gateway जाँच गर्नुहोस्।</div>
+      <div class="warn ja">失敗した場合：インターフェースの <code>no shutdown</code>、スタティックルート、PCのゲートウェイを確認。</div>
+    </div>
+
+    <div class="card" id="l2-7">
+      <h3><span class="ne">7️⃣ Save गर्ने</span><span class="ja">7️⃣ 保存</span></h3>
+      <pre>Router1# write memory
+Router2# write memory</pre>
+      <p class="ne">Packet Tracer: <b>File → Save As</b> → <code>.pkt</code> file।</p>
+      <p class="ja">Packet Tracer: <b>File → Save As</b> → <code>.pkt</code> ファイル。</p>
+    </div>
+
+    <div class="card" id="l2-8">
+      <h3><span class="ne">🎁 Bonus: Web Server थप्ने</span><span class="ja">🎁 ボーナス：Webサーバー追加</span></h3>
+      <ol class="ne">
+        <li>Server-PT → Switch1 मा जोड्ने</li>
+        <li>IP: <code>192.168.10.10 / 255.255.255.0</code></li>
+        <li>Browser बाट <code>http://192.168.10.10</code> access गर्ने</li>
+        <li>Default Gateway <code>192.168.10.253</code> सेट गर्ने</li>
+      </ol>
+      <ol class="ja">
+        <li>Server-PT → Switch1 に接続</li>
+        <li>IP：<code>192.168.10.10 / 255.255.255.0</code></li>
+        <li>ブラウザで <code>http://192.168.10.10</code> にアクセス</li>
+        <li>デフォルトゲートウェイ <code>192.168.10.253</code> を設定</li>
+      </ol>
+    </div>
+
+    <!-- ========== CHECKLIST ========== -->
+    <div class="lesson-header">
+      <div class="badge">✅</div>
+      <h2><span class="ne">आफैं जाँच गर्नुहोस्</span><span class="ja">セルフチェック</span></h2>
+    </div>
+    <div class="card" id="l3-checklist">
+      <ul class="checklist ne">
+        <li><input type="checkbox"> सबै cable straight cable ले जडान गरियो</li>
+        <li><input type="checkbox"> Router1, Router2 का सबै interface मा IP + no shutdown गरियो</li>
+        <li><input type="checkbox"> सबै PC मा IP + Default Gateway सेट गरियो</li>
+        <li><input type="checkbox"> दुवै Router मा Static Route हालियो</li>
+        <li><input type="checkbox"> PC0/PC1 ↔ PC2/PC3 ping Success 100% आयो</li>
+        <li><input type="checkbox"> Router1, Router2 मा write memory ले save गरियो</li>
+      </ul>
+      <ul class="checklist ja">
+        <li><input type="checkbox"> すべてストレートケーブルで接続した</li>
+        <li><input type="checkbox"> Router1, Router2 の全インターフェースに IP と no shutdown を設定した</li>
+        <li><input type="checkbox"> すべての PC に IP とデフォルトゲートウェイを設定した</li>
+        <li><input type="checkbox"> 両方の Router にスタティックルートを設定した</li>
+        <li><input type="checkbox"> PC0/PC1 ↔ PC2/PC3 の ping が Success 100% になった</li>
+        <li><input type="checkbox"> Router1, Router2 で write memory により保存した</li>
+      </ul>
+    </div>
+
+    <div class="finish">
+      <span class="ne">
+        <h2>🎉 बधाई छ!</h2>
+        <p>तपाईंले नेटवर्क डिजाइनको आधारभूत ज्ञानदेखि Packet Tracer ब्यावहारिक अभ्यास सम्म पूरा गर्नुभयो।</p>
+      </span>
+      <span class="ja">
+        <h2>🎉 おめでとう！</h2>
+        <p>ネットワーク設計の基礎から Packet Tracer 実習まで完了しました。</p>
+      </span>
+    </div>
+
+  </main>
+</div>
+
+<script>
+function setLang(lang) {
+  document.body.classList.toggle('lang-ja', lang === 'ja');
+  document.getElementById('btn-ne').classList.toggle('active', lang === 'ne');
+  document.getElementById('btn-ja').classList.toggle('active', lang === 'ja');
+  document.documentElement.lang = lang;
+}
+
+// scroll-spy: highlight active sidebar link
+const links = document.querySelectorAll('.nav-link');
+links.forEach(l => {
+  l.addEventListener('click', () => {
+    const target = document.getElementById(l.dataset.target);
+    if (target) target.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+});
+const sections = Array.from(links).map(l => document.getElementById(l.dataset.target)).filter(Boolean);
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      links.forEach(l => l.classList.toggle('active', l.dataset.target === id));
+    }
+  });
+}, { rootMargin: "-20% 0px -70% 0px" });
+sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
